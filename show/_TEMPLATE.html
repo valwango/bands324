@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{BAND}}</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body style="background: #282828;">
+  <header class="header">
+    <a href="../index.html" class="header-title-btn">bands</a>
+  </header>
+  <main>
+    <div class="star">★</div>
+    <form id="edit-show-form">
+      <div style="width: 220px; margin: 0 auto;">
+        <input type="text" id="band" value="{{BAND}}" class="star-input" style="display: block; width: 100%; margin-bottom: 10px;" />
+        <input type="text" id="venue" value="{{VENUE}}" class="star-input" style="display: block; width: 100%; margin-bottom: 10px;" />
+        <div class="star-date-wrap" style="margin-bottom: 10px; position: relative;">
+          <input type="text" id="custom-date" value="{{DATE}}" class="star-input star-date-fake" autocomplete="off" style="background: transparent !important;" />
+          <div id="custom-datepicker" class="custom-datepicker" style="display:none; position: absolute; left: 0; top: 100%;"></div>
+        </div>
+      </div>
+      <div class="color-picker-row" id="color-picker-row" style="margin-bottom: 24px;"></div>
+      <button type="submit" class="star-submit">update band</button>
+    </form>
+  </main>
+<script src="date-picker.js"></script>
+<script src="show-edit.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', function() {
+    setupCustomDatePicker('custom-date', 'custom-datepicker');
+    setupShowEdit({
+      bandInput: document.getElementById('band'),
+      venueInput: document.getElementById('venue'),
+      dateInput: document.getElementById('custom-date'),
+      colorRow: document.getElementById('color-picker-row'),
+      submitBtn: document.querySelector('.star-submit'),
+      initialBg: '{{BGIMAGE}}'
+    });
+  });
+</script>
+</body>
+</html>
