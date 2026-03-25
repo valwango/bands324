@@ -1,20 +1,10 @@
 // Shared logic for editing a show and updating localStorage for index.html
 
-function getShowKey() {
-  // Use the page filename (without extension) as the key
-  const path = window.location.pathname;
-  const file = path.substring(path.lastIndexOf('/') + 1, path.lastIndexOf('.'));
-  return 'show-' + file;
-}
 
-function saveShowData(data) {
-  localStorage.setItem(getShowKey(), JSON.stringify(data));
-}
-
-function loadShowData() {
-  const raw = localStorage.getItem(getShowKey());
-  if (!raw) return null;
-  try { return JSON.parse(raw); } catch { return null; }
+// Get show ID from URL (?id=SHOW_ID)
+function getShowIdFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('id');
 }
 
 function setupShowEdit({ bandInput, venueInput, dateInput, colorRow, submitBtn, initialBg }) {
@@ -45,18 +35,29 @@ function setupShowEdit({ bandInput, venueInput, dateInput, colorRow, submitBtn, 
     colorRow.appendChild(circle);
   });
 
-  // Load previous edits if present
-  const prev = loadShowData();
-  if (prev) {
-    bandInput.value = prev.band;
-    venueInput.value = prev.venue;
-    dateInput.value = prev.date;
-    selectedBg = prev.bgImage;
-    bgInput.value = prev.bgImage;
-    document.querySelectorAll('.color-circle').forEach(c => {
-      if (c.title === prev.bgImage.replace('.png','')) c.classList.add('selected');
-      else c.classList.remove('selected');
-    });
+  // Load show data from Firestore
+  const showId = getShowIdFromUrl();
+  if (showId) {
+    db.collection('shows').doc(showId).get()
+      .then(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          bandInput.value = data.band || '';
+          venueInput.value = data.venue || '';
+          dateInput.value = data.date || '';
+          selectedBg = data.bgImage || 'blackband.png';
+          bgInput.value = selectedBg;
+          document.querySelectorAll('.color-circle').forEach(c => {
+            if (c.title === selectedBg.replace('.png','')) c.classList.add('selected');
+            else c.classList.remove('selected');
+          });
+        } else {
+          alert('Show not found.');
+        }
+      })
+      .catch(err => {
+        alert('Error loading show: ' + err.message);
+      });
   }
 
   submitBtn.addEventListener('click', function(e) {
@@ -66,7 +67,21 @@ function setupShowEdit({ bandInput, venueInput, dateInput, colorRow, submitBtn, 
     const date = dateInput.value.trim();
     const bgImage = bgInput.value;
     if (!band || !venue || !date) return;
-    saveShowData({ band, venue, date, bgImage });
-    window.location.href = '../index.html';
+    if (!showId) {
+      alert('Show ID not found in URL.');
+      return;
+    }
+    db.collection('shows').doc(showId).update({
+      band,
+      venue,
+      date,
+      bgImage
+    })
+    .then(() => {
+      window.location.href = '../index.html';
+    })
+    .catch((error) => {
+      alert('Failed to update show: ' + error.message);
+    });
   });
 }
