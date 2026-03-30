@@ -3,42 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>bands</title>  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <title>Bands</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
   <header class="header">
-   
+    <a href="profile.html" id="profile-icon-btn" title="Profile" class="header-icon-btn">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M21 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/></svg>
+    </a>
     <a href="index.html" class="header-title-btn">bands</a>
-
+    <!-- Add Show button -->
     <button id="add-block-btn" title="Add Show">+</button>
   </header>
 
   <main>
+    <!-- Upcoming Shows -->
     <section id="upcoming-section" class="blocks-section">
       <div id="upcoming-list" class="blocks"></div>
     </section>
 
+    <!-- Past Shows -->
     <section id="past-section" class="blocks-section">
-      <h2 class="section-title">past shows</h2>
       <div id="past-list" class="blocks"></div>
     </section>
-
-
-
   </main>
 
-  <!-- Firebase App (core) -->
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js"></script>
-  <!-- Firebase Auth (optional, remove if not needed) -->
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js"></script>
-  <!-- Firebase Firestore (optional, remove if not needed) -->
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js"></script>
-  <!-- Firebase Storage (for file uploads/downloads) -->
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js"></script>
-  <script src="firebase-config.js"></script>
-  <script src="script.js"></script>
+
+  <!-- Firebase + App logic -->
+  <script type="module" src="script.js"></script>
 </body>
 </html>

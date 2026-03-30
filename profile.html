@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+   <header class="header">
+    <a href="index.html" class="header-title-btn">bands</a>
+  </header>
+  <main>
+   <section class="profile-section">
+  <div class="profile-info">
+    <div class="profile-details">
+  <label for="username-input">user:</label>
+  <input id="username-input" type="text"/>
+
+  <label for="email-input">email:</label>
+  <input id="email-input" type="email"/>
+
+  <div class="profile-actions">
+    <button id="save-profile-btn" class="site-btn">save changes</button>
+    <button id="change-password-btn" class="site-btn">change password</button>
+    <button id="logout-btn" class="site-btn">logout</button>
+  </div>
+</div>
+
+      <!-- Password input modal -->
+      <div id="password-modal" class="modal">
+        <div class="modal-content">
+          <button id="close-password-modal" class="close-editor">&times;</button>
+          <h3 style="margin-top:0;">change Password</h3>
+          <label for="password-input"><strong>new password:</strong></label>
+          <input id="password-input" type="password" placeholder="Enter new password" />
+          <button id="submit-password-btn" class="site-btn">submit new password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- logout button moved above -->
+  </main>
+</body>
+<script type="module" src="script.js"></script>
+<script type="module" src="profile.js"></script>
+</html>

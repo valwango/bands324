@@ -1,3 +1,298 @@
+
+/* --- Signup Page Styles --- */
+body {
+  background: #222;
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.signup-container {
+  max-width: 320px;
+  margin: 60px auto;
+  background: rgba(40,40,40,0.95);
+  border-radius: 12px;
+  padding: 32px 24px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  text-align: center;
+}
+
+.signup-title {
+  color: #fff;
+  font-size: 1.5em;
+  margin-bottom: 24px;
+}
+
+.signup-input:focus {
+  background: rgba(255,255,255,0.18);
+}
+
+.signup-btn {
+  width: 100%;
+  padding: 10px;
+  background: #fff;
+  color: #222;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.signup-btn:hover {
+  background: #ffe066;
+}
+
+.signup-error {
+  color: #ff5c5c;
+  font-size: 0.9em;
+  min-height: 20px;
+  margin-bottom: 10px;
+}
+
+.signup-link {
+  margin-top: 14px;
+  font-size: 0.9em;
+  color: #aaa;
+}
+
+.signup-link a {
+  color: #ffe066;
+  text-decoration: none;
+}
+/* --- Login Signup Text Styles --- */
+.login-signup-text {
+  margin-top: 14px;
+  font-size: 0.9em;
+  color: #aaa;
+  text-align: center;
+}
+.login-signup-link {
+  color: #ffe066;
+  text-decoration: underline;
+}
+/* --- Login Page Styles --- */
+.login-container {
+  max-width: 320px;
+  margin: 60px auto 0 auto;
+  background: rgba(40,40,40,0.95);
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  padding: 32px 24px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.login-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.5em;
+  color: #fff;
+  margin-bottom: 0px;
+  letter-spacing: 1px;
+}
+.login-input {
+  width: 100%;
+  margin-bottom: 18px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1em;
+  outline: none;
+  transition: background 0.2s;
+}
+.login-input:focus {
+  background: rgba(255,255,255,0.18);
+}
+.login-btn {
+  width: 100%;
+  padding: 10px 0;
+  background: #fff;
+  color: #222;
+  border: none;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.1em;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s, color 0.2s;
+}
+.login-btn:hover {
+  background: #ffe066;
+  color: #222;
+}
+.login-error {
+  color: #ff5c5c;
+  font-size: 0.98em;
+  margin-bottom: 10px;
+  min-height: 20px;
+  text-align: center;
+}
+
+.modal-content {
+  width: min(92vw, 360px);
+  background: #121212;
+  border-radius: 12px;
+  padding: 24px 18px 20px;
+  border: 1px solid #333;
+  box-shadow: 0 20px 40px rgba(0,0,0,.5);
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: stretch;
+}
+.close-editor {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #222;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  line-height: 28px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.profile-section {
+  margin-top: 48px;
+}
+.profile-details input[type="text"],
+.profile-details input[type="email"] {
+  width: 220px;
+  max-width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: .92rem;
+  font-weight: 900;
+  letter-spacing: .08rem;
+  outline: none;
+  padding-left: 18px;
+}
+.profile-details #password-change-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+}
+.profile-details #password-fields {
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.profile-details #change-password-btn,
+.profile-details #submit-password-btn {
+  margin-left: 0;
+  margin-right: 0;
+  display: block;
+  width: 220px;
+  max-width: 100%;
+}
+
+.profile-details {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 10px 16px;
+  align-items: center;
+}
+.profile-details label {
+  justify-self: end;
+  align-self: flex-start;
+}
+.profile-details input[type="text"],
+.profile-details input[type="email"] {
+  padding-left: 18px;
+  width: 220px;
+  max-width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: .92rem;
+  font-weight: 900;
+  letter-spacing: .08rem;
+  outline: none;
+}
+.profile-details input[type="text"]::placeholder,
+.profile-details input[type="email"]::placeholder {
+  color: var(--muted);
+  opacity: 1;
+  font-family: inherit;
+  font-size: .92rem;
+  font-weight: 900;
+  letter-spacing: .08rem;
+}
+.profile-details button {
+  grid-column: 1 / span 2;
+}
+/* Profile icon button in header */
+.header-icon-btn {
+  position: absolute;
+  top: 10px;
+  left: 8px;
+  width: 100px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  z-index: 200;
+  transition: background 0.2s;
+  border-radius: 50%;
+  padding-left: 60px;
+  padding-right: 0;
+  padding-top: 8px;
+  padding-bottom: 0;
+}
+
+@media (max-width: 700px) {
+  .header-icon-btn {
+    left: 2vw;
+    width: 36px;
+    height: 28.8px;
+    padding-left: 8px;
+    padding-top: 4px;
+  }
+  .header-icon-btn svg {
+    width: 28.8px;
+    height: 28.8px;
+  }
+}
+/* Site-wide button style for consistency (used for logout) */
+.site-btn {
+  padding: 8px 18px;
+  font-size: 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: inherit;
+  cursor: pointer;
+  margin-top: 24px;
+  transition: background 0.2s;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 6px;
+}
+.site-btn:focus {
+  outline: none;
+  background: transparent;
+}
+.site-btn:hover {
+  background: rgba(255,255,255,0.06);
+}
 input#custom-date:not(:placeholder-shown) {
   background: transparent !important;
 }
@@ -88,25 +383,30 @@ input#custom-date:not(:placeholder-shown) {
 }
 input#band:not(:placeholder-shown),
 input#venue:not(:placeholder-shown),
+input#diary:not(:placeholder-shown),
 input#date:not(:placeholder-shown),
 input#date-fake:not(:placeholder-shown) {
   background: transparent !important;
 }
 input#band:focus,
 input#venue:focus,
+input#diary:focus,
 input#date:focus,
 input#date-fake:focus,
 input#band:active,
 input#venue:active,
+input#diary:active,
 input#date:active,
 input#date-fake:active {
   background: transparent !important;
 }
 input#band:focus,
 input#venue:focus,
+input#diary:focus,
 input#custom-date:focus,
 input#band:active,
 input#venue:active,
+input#diary:active,
 input#custom-date:active {
   border: none !important;
   box-shadow: none !important;
@@ -120,35 +420,49 @@ input#custom-date:active {
 }
 input#band::placeholder,
 input#venue::placeholder,
+input#diary::placeholder,
 input#custom-date::placeholder {
   color: #fff !important;
   opacity: 1 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 1rem !important;
 }
 input#band::-webkit-input-placeholder,
 input#venue::-webkit-input-placeholder,
+input#diary::-webkit-input-placeholder,
 input#custom-date::-webkit-input-placeholder {
   color: #fff !important;
   opacity: 1 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 1rem !important;
 }
 input#band:-ms-input-placeholder,
 input#venue:-ms-input-placeholder,
+input#diary:-ms-input-placeholder,
 input#custom-date:-ms-input-placeholder {
   color: #fff !important;
   opacity: 1 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 1rem !important;
 }
 input#band::-ms-input-placeholder,
 input#venue::-ms-input-placeholder,
+input#diary::-ms-input-placeholder,
 input#custom-date::-ms-input-placeholder {
   color: #fff !important;
   opacity: 1 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 1rem !important;
 }
 input#band,
 input#band,
 input#venue,
+input#diary,
 input#date,
 input#date-fake {
   color: #fff !important;
   font-family: 'JetBrains Mono', monospace !important;
+  caret-color: #fff !important;
 }
 input#date,
 input#date-fake {
@@ -157,10 +471,24 @@ input#date-fake {
   background: rgba(255,255,255,0.1) !important;
 }
 input#band,
-input#venue {
+input#venue,
+input#diary {
   border: none !important;
   box-shadow: none !important;
   background: rgba(255,255,255,0.1) !important;
+  transition: background 0.2s;
+}
+
+input#band:focus,
+input#venue:focus,
+input#diary:focus,
+input#band:active,
+input#venue:active,
+input#diary:active,
+input#band:not(:placeholder-shown),
+input#venue:not(:placeholder-shown),
+input#diary:not(:placeholder-shown) {
+  background: transparent !important;
 }
 input#custom-date {
   border: none !important;
@@ -340,7 +668,7 @@ input[type="date"]::-webkit-datetime-edit-year-field {
 .star-submit {
   padding: 8px 18px;
   font-size: 1rem;
-  font-family: inherit;
+  font-family: 'JetBrains Mono', monospace;
   font-weight: inherit;
   background: transparent;
   border: none;
@@ -426,7 +754,7 @@ body {
   border: none;
   color: inherit;
   cursor: pointer;
-  font-family: inherit;
+  font-family: 'JetBrains Mono', monospace;
   outline: none;
   text-align: center;
   display: inline-block;
@@ -485,7 +813,7 @@ body {
   padding: 0 10px 0 0;
   border-radius: 0;
   background-size: 100% 56px;
-  background-position: center;
+  background-position: 60px center;
   background-repeat: no-repeat;
   overflow: hidden;
   z-index: 0;
@@ -527,6 +855,7 @@ body {
   position: relative;
   z-index: 1;
 }
+/* Upcoming and Past Show Block Backgrounds */
 
 .block .days {
   display: flex;
@@ -539,9 +868,9 @@ body {
   min-height: 56px;
   min-width: 76px;
   width: 76px;
-  height: 56px;
+  height: 44.8px;
   color: #000;
-  background-image: url('assets/sticky.png'), url('sticky.png');
+  /*background-image: url('assets/sticky.png'), url('sticky.png');*/
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -549,8 +878,21 @@ body {
   flex: 0 0 76px;
   overflow: hidden;
   gap: 0;
+  font-size: 1.3rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-align: center;
+  margin: 0 6px 0 0;
+  line-height: 1;
+  user-select: none;
+  text-transform: uppercase;
+  }
+#upcoming-list .block .days {
+  background-image: url('assets/sticky.png'), url('sticky.png');
 }
-
+#past-list .block .days {
+  background-image: url('assets/rippedsticky.png'), url('rippedsticky.png');
+}
 .block .days-num {
   display: flex;
   align-items: center;
@@ -677,25 +1019,7 @@ body {
     height: 44.8px;
     min-height: 44.8px;
   }
-  .block .days {
-    font-size: 1.3rem;
-    font-weight: 900;
-    color: #000;
-    letter-spacing: 0;
-    text-align: center;
-    margin: 0 6px 0 0;
-    padding: 0;
-    line-height: 1;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    user-select: none;
-    text-transform: uppercase;
-    min-width: 76px;
-    width: 76px;
-    height: 44.8px;
-  }
+  
   .block .days-num {
     font-size: 1.3rem;
     margin-left: 10px;
@@ -817,4 +1141,71 @@ body {
   height: 32px;
   line-height: 28px;
   font-size: 16px;
+}
+/* Container for all profile info */
+.profile-details {
+  display: flex;
+  flex-direction: column; /* stack label-input pairs vertically */
+  gap: 12px;              /* space between rows */
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;         /* center horizontally */
+}
+
+/* Each label-input pair */
+.profile-details label {
+  font-weight: 700;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* Inputs */
+.profile-details input[type="text"],
+.profile-details input[type="email"] {
+  width: 100%;
+  max-width: 340px;       /* keep same width as buttons */
+  padding: 8px 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.92rem;
+  font-weight: 900;
+  background: rgba(255,255,255,0.05);
+  border: none !important;
+  border-radius: 6px;
+  color: var(--text);
+  outline: none;
+  outline: none;
+  color: inherit;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+/* Button container (Save & Change Password & Logout) */
+.profile-actions {
+  display: flex;
+  flex-direction: column; /* vertical stack */
+  gap: 12px;              /* spacing between buttons */
+  width: 100%;
+  max-width: 220px;       /* match inputs */
+  margin: 18px auto 0;    /* center horizontally */
+}
+
+/* All buttons in the container */
+.profile-actions .site-btn {
+  width: 100%;            /* full width of container */
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background-color: #222;
+  color: #fff;
+  transition: background 0.2s;
+  text-align: center;
+}
+
+.profile-actions .site-btn:hover {
+  background-color: #555;
 }

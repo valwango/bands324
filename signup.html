@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up | bands</title>
+
+
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css" />
+
+
+</head>
+<body>
+
+<div class="signup-container">
+  <div class="login-title">create account</div>
+
+  <form id="signup-form">
+    <div id="signup-error" class="signup-error"></div>
+
+    <input type="email" id="email" class="login-input" placeholder="email" required />
+    <input type="password" id="password" class="login-input" placeholder="password" required />
+    <input type="password" id="confirm-password" class="login-input" placeholder="confirm password" required />
+
+    <button type="submit" class="login-btn">sign up</button>
+  </form>
+
+  <div class="signup-link">
+    already have an account? <a href="login.html">log in</a>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const firebaseConfig = {
+   apiKey: "AIzaSyAavRMHSoKc9IxmyUb7W_IbLNa-pmVoUVw",
+  authDomain: "bands322-98e2b.firebaseapp.com",
+  projectId: "bands322-98e2b",
+  storageBucket: "bands322-98e2b.firebasestorage.app",
+  messagingSenderId: "255200010894",
+  appId: "1:255200010894:web:8e08f90861869333129fdf",
+  measurementId: "G-Y1XTYDZVH6"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const form = document.getElementById('signup-form');
+  const errorDiv = document.getElementById('signup-error');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const confirm = document.getElementById('confirm-password').value;
+
+    errorDiv.textContent = '';
+
+    if (password !== confirm) {
+      errorDiv.textContent = "Passwords do not match.";
+      return;
+    }
+
+    if (password.length < 6) {
+      errorDiv.textContent = "Password must be at least 6 characters.";
+      return;
+    }
+
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      window.location.href = "index.html";
+    } catch (error) {
+      errorDiv.textContent = error.message;
+    }
+  });
+</script>
+
+</body>
+</html>
