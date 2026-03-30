@@ -46,7 +46,15 @@ function createBlock(row, idx, type) {
     else if (days > 1) dateDiv.innerHTML = `<span class="days-num">${days}</span><span class="days-label">DAYS</span>`;
     else dateDiv.textContent = date;
   } else {
+    // Assign a random rippedsticky background to the .days div
+    const rippedStickies = [
+      'rippedsticky.png',
+      'rippedsticky1.png',
+      'rippedsticky2.png'
+    ];
+    const randomSticky = rippedStickies[Math.floor(Math.random() * rippedStickies.length)];
     dateDiv.innerHTML = `<span class="past-date-label">${date}</span>`;
+    dateDiv.style.backgroundImage = `url('assets/${randomSticky}')`;
   }
   block.appendChild(dateDiv);
 

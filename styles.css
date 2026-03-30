@@ -874,7 +874,8 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.2);
+  box-shadow: none;
+  outline: none;
   flex: 0 0 76px;
   overflow: hidden;
   gap: 0;
@@ -890,9 +891,9 @@ body {
 #upcoming-list .block .days {
   background-image: url('assets/sticky.png'), url('sticky.png');
 }
-#past-list .block .days {
+/* #past-list .block .days {
   background-image: url('assets/rippedsticky.png'), url('rippedsticky.png');
-}
+} */
 .block .days-num {
   display: flex;
   align-items: center;
