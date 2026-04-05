@@ -18,6 +18,17 @@ const diaryInput = document.getElementById("diary");
 const bgInput = document.getElementById("bgImage");
 const deleteBtn = document.getElementById("star-delete");
 
+function autoResizeDiary() {
+  if (!diaryInput) return;
+  diaryInput.style.height = "auto";
+  diaryInput.style.height = `${diaryInput.scrollHeight}px`;
+}
+
+if (diaryInput) {
+  autoResizeDiary();
+  diaryInput.addEventListener("input", autoResizeDiary);
+}
+
 // Wait for user auth
 onAuthStateChanged(auth, async (user) => {
   if (!user || !showId) {
@@ -46,6 +57,7 @@ onAuthStateChanged(auth, async (user) => {
     dateInput.value = data.date || "";
     diaryInput.value = data.diary || "";
     bgInput.value = data.bgImage || "blackband.png";
+    autoResizeDiary();
 
     // Set date picker correctly
     if (data.date) setSelectedDate(new Date(data.date));

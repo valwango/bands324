@@ -13,6 +13,17 @@ const diaryInput = document.getElementById('diary'); // <textarea id="diary">
 const customDateInput = document.getElementById('custom-date');
 const bgInput = document.getElementById('bgImage');
 
+function autoResizeDiary() {
+  if (!diaryInput) return;
+  diaryInput.style.height = 'auto';
+  diaryInput.style.height = `${diaryInput.scrollHeight}px`;
+}
+
+if (diaryInput) {
+  autoResizeDiary();
+  diaryInput.addEventListener('input', autoResizeDiary);
+}
+
 onAuthStateChanged(auth, user=>{
   if(!user){
     alert('Please log in to add a show.');
@@ -60,6 +71,7 @@ onAuthStateChanged(auth, user=>{
         });
       }
 
+      autoResizeDiary();
       goToPage("index.html");
     } catch(err){
       console.error('Error saving show:', err);

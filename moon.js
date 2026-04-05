@@ -11,6 +11,17 @@ const customDateInput = document.getElementById('custom-date');
 const diaryInput = document.getElementById('diary');
 const bgInput = document.getElementById('bgImage');
 
+function autoResizeDiary() {
+  if (!diaryInput) return;
+  diaryInput.style.height = 'auto';
+  diaryInput.style.height = `${diaryInput.scrollHeight}px`;
+}
+
+if (diaryInput) {
+  autoResizeDiary();
+  diaryInput.addEventListener('input', autoResizeDiary);
+}
+
 // Artist input and add button
 const artistFields = document.getElementById('artist-fields');
 const addArtistBtn = document.getElementById('add-artist-btn');
@@ -118,6 +129,7 @@ form.addEventListener('submit', async e => {
 
     // Reset form
     form.reset();
+    autoResizeDiary();
 
     // Keep the original first artist input
     if(firstArtistInput) firstArtistInput.value = '';

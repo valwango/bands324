@@ -383,30 +383,30 @@ input#custom-date:not(:placeholder-shown) {
 }
 input#band:not(:placeholder-shown),
 input#venue:not(:placeholder-shown),
-input#diary:not(:placeholder-shown),
+#diary:not(:placeholder-shown),
 input#date:not(:placeholder-shown),
 input#date-fake:not(:placeholder-shown) {
   background: transparent !important;
 }
 input#band:focus,
 input#venue:focus,
-input#diary:focus,
+#diary:focus,
 input#date:focus,
 input#date-fake:focus,
 input#band:active,
 input#venue:active,
-input#diary:active,
+#diary:active,
 input#date:active,
 input#date-fake:active {
   background: transparent !important;
 }
 input#band:focus,
 input#venue:focus,
-input#diary:focus,
+#diary:focus,
 input#custom-date:focus,
 input#band:active,
 input#venue:active,
-input#diary:active,
+#diary:active,
 input#custom-date:active {
   border: none !important;
   box-shadow: none !important;
@@ -420,48 +420,50 @@ input#custom-date:active {
 }
 input#band::placeholder,
 input#venue::placeholder,
-input#diary::placeholder,
+#diary::placeholder,
 input#custom-date::placeholder {
   color: #fff !important;
   opacity: 1 !important;
   font-family: 'JetBrains Mono', monospace !important;
-  font-size: 1rem !important;
+  font-size: inherit !important;
 }
 input#band::-webkit-input-placeholder,
 input#venue::-webkit-input-placeholder,
-input#diary::-webkit-input-placeholder,
+#diary::-webkit-input-placeholder,
 input#custom-date::-webkit-input-placeholder {
   color: #fff !important;
   opacity: 1 !important;
   font-family: 'JetBrains Mono', monospace !important;
-  font-size: 1rem !important;
+  font-size: inherit !important;
 }
 input#band:-ms-input-placeholder,
 input#venue:-ms-input-placeholder,
-input#diary:-ms-input-placeholder,
+#diary:-ms-input-placeholder,
 input#custom-date:-ms-input-placeholder {
   color: #fff !important;
   opacity: 1 !important;
   font-family: 'JetBrains Mono', monospace !important;
-  font-size: 1rem !important;
+  font-size: inherit !important;
 }
 input#band::-ms-input-placeholder,
 input#venue::-ms-input-placeholder,
-input#diary::-ms-input-placeholder,
+#diary::-ms-input-placeholder,
 input#custom-date::-ms-input-placeholder {
   color: #fff !important;
   opacity: 1 !important;
   font-family: 'JetBrains Mono', monospace !important;
-  font-size: 1rem !important;
+  font-size: inherit !important;
 }
 input#band,
 input#band,
 input#venue,
-input#diary,
+#diary,
+input#custom-date,
 input#date,
 input#date-fake {
   color: #fff !important;
   font-family: 'JetBrains Mono', monospace !important;
+  font-size: 1rem !important;
   caret-color: #fff !important;
 }
 input#date,
@@ -472,7 +474,7 @@ input#date-fake {
 }
 input#band,
 input#venue,
-input#diary {
+#diary {
   border: none !important;
   box-shadow: none !important;
   background: rgba(255,255,255,0.1) !important;
@@ -481,15 +483,56 @@ input#diary {
 
 input#band:focus,
 input#venue:focus,
-input#diary:focus,
+#diary:focus,
 input#band:active,
 input#venue:active,
-input#diary:active,
+#diary:active,
 input#band:not(:placeholder-shown),
 input#venue:not(:placeholder-shown),
-input#diary:not(:placeholder-shown) {
+#diary:not(:placeholder-shown) {
   background: transparent !important;
 }
+
+#diary {
+  min-height: 46px;
+  line-height: 1.35;
+  resize: none;
+  overflow-y: hidden;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Keep browser autofill colors aligned with the site's dark input styling. */
+input#band:-webkit-autofill,
+input#venue:-webkit-autofill,
+input#diary:-webkit-autofill,
+input#custom-date:-webkit-autofill,
+input#band:-webkit-autofill:hover,
+input#venue:-webkit-autofill:hover,
+input#diary:-webkit-autofill:hover,
+input#custom-date:-webkit-autofill:hover,
+input#band:-webkit-autofill:focus,
+input#venue:-webkit-autofill:focus,
+input#diary:-webkit-autofill:focus,
+input#custom-date:-webkit-autofill:focus {
+  -webkit-text-fill-color: #fff !important;
+  caret-color: #fff !important;
+  border: none !important;
+  box-shadow: 0 0 0 1000px transparent inset !important;
+  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+  transition: background-color 9999s ease-out 0s !important;
+}
+
+input#band:-moz-autofill,
+input#venue:-moz-autofill,
+input#diary:-moz-autofill,
+input#custom-date:-moz-autofill {
+  color: #fff !important;
+  caret-color: #fff !important;
+  border: none !important;
+  box-shadow: 0 0 0 1000px transparent inset !important;
+}
+
 input#custom-date {
   border: none !important;
   box-shadow: none !important;
@@ -568,7 +611,7 @@ input[type="date"]::-webkit-datetime-edit-year-field {
 .color-circle {
   width: 32px;
   height: 32px;
-  border-radius: 6px;
+  border-radius: 8px;
   border: 2px solid transparent;
   background-size: cover;
   background-position: center;
@@ -649,7 +692,7 @@ input[type="date"]::-webkit-datetime-edit-year-field {
 .color-circle {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: 8px;
   background-size: cover;
   background-position: center;
   cursor: pointer;
@@ -717,6 +760,7 @@ input[type="date"]::-webkit-datetime-edit-year-field {
 .star-date-wrap {
   position: relative;
   width: 220px;
+  min-height: 24px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -773,6 +817,7 @@ input[type="date"]::-webkit-datetime-edit-year-field {
 
 #star-delete {
   margin-top: 10px;
+  margin-bottom: 20px;
 }
 
 input[type="date"] {
