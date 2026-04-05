@@ -1,36 +1,17 @@
 // star.js
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, addDoc, doc, setDoc, getDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import "./pickers.js";
-import { doc, setDoc, getDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { goToPage } from "./navigation.js";
-
-// adding log for artists
-
-const artistRef = doc(db, 'users', currentUser.uid, 'artists', band.toLowerCase());
-
-const artistSnap = await getDoc(artistRef);
-
-if (artistSnap.exists()) {
-  await setDoc(artistRef, {
-    appearances: increment(1),
-    sources: ["show"]
-  }, { merge: true });
-} else {
-  await setDoc(artistRef, {
-    name: band,
-    firstSeen: new Date(),
-    appearances: 1,
-    sources: ["show"]
-  });
-}
 
 // -------------------
 // Optional Diary + Firestore Form Submission
 // -------------------
 const form = document.getElementById('add-show-form');
 const diaryInput = document.getElementById('diary'); // <textarea id="diary">
+const customDateInput = document.getElementById('custom-date');
+const bgInput = document.getElementById('bgImage');
 
 onAuthStateChanged(auth, user=>{
   if(!user){
@@ -60,6 +41,25 @@ onAuthStateChanged(auth, user=>{
       if(diary) showData.diary = diary;
 
       await addDoc(userShowsRef, showData);
+
+      // Keep a per-user artist log for show appearances.
+      const artistRef = doc(db, 'users', user.uid, 'artists', band.toLowerCase());
+      const artistSnap = await getDoc(artistRef);
+
+      if (artistSnap.exists()) {
+        await setDoc(artistRef, {
+          appearances: increment(1),
+          sources: ["show"]
+        }, { merge: true });
+      } else {
+        await setDoc(artistRef, {
+          name: band,
+          firstSeen: new Date(),
+          appearances: 1,
+          sources: ["show"]
+        });
+      }
+
       goToPage("index.html");
     } catch(err){
       console.error('Error saving show:', err);
