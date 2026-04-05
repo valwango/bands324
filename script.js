@@ -128,6 +128,10 @@ function createFestivalBlock(row, idx, type) {
 function listenToUserEvents(user) {
   const upcomingBlocks = document.getElementById('upcoming-list');
   const pastBlocks = document.getElementById('past-list');
+  const loadingEl = document.getElementById('blocks-loading');
+
+  if (loadingEl) loadingEl.classList.remove('is-hidden');
+  let hasRenderedOnce = false;
 
   // Shows
   const showsRef = collection(db, "users", user.uid, "shows");
@@ -173,6 +177,11 @@ function listenToUserEvents(user) {
         if(ev.type === 'show') pastBlocks.appendChild(createBlock(ev, idx, 'past'));
         else if(ev.type === 'festival') pastBlocks.appendChild(createFestivalBlock(ev, idx, 'past'));
       });
+
+      if (!hasRenderedOnce) {
+        hasRenderedOnce = true;
+        if (loadingEl) loadingEl.classList.add('is-hidden');
+      }
     });
   });
 }

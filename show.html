@@ -17,27 +17,33 @@
   </header>
 
   <main>
-    <div class="star">★</div>
+    <div id="page-loading" class="page-loading" aria-live="polite" aria-label="Loading page">
+      <div class="page-loading-star" aria-hidden="true">★</div>
+    </div>
 
-    <form id="add-show-form">
-      <div style="width: 220px; margin: 0 auto;">
-        <input type="text" id="band" placeholder="artist" required class="star-input" style="display: block; width: 100%; margin-bottom: 10px;" />
-        <input type="text" id="venue" placeholder="venue" required class="star-input" style="display: block; width: 100%; margin-bottom: 10px;" />
-        <div class="star-date-wrap" style="margin-bottom: 10px; position: relative;">
-          <input type="text" id="custom-date" name="date" placeholder="date" class="star-input star-date-fake" autocomplete="off" required />
-          <div id="custom-datepicker" class="custom-datepicker" style="display:none; position: absolute; left: 0; top: 100%;"></div>
+    <div id="show-content" class="show-content is-hidden">
+      <div class="star">★</div>
+
+      <form id="add-show-form">
+        <div style="width: 220px; margin: 0 auto;">
+          <input type="text" id="band" placeholder="artist" required class="star-input" style="display: block; width: 100%; margin-bottom: 10px;" />
+          <input type="text" id="venue" placeholder="venue" required class="star-input" style="display: block; width: 100%; margin-bottom: 10px;" />
+          <div class="star-date-wrap" style="margin-bottom: 10px; position: relative;">
+            <input type="text" id="custom-date" name="date" placeholder="date" class="star-input star-date-fake" autocomplete="off" required />
+            <div id="custom-datepicker" class="custom-datepicker" style="display:none; position: absolute; left: 0; top: 100%;"></div>
+          </div>
+          <textarea id="diary" placeholder="diary note" rows="2" style="display: block; width: 100%; margin-top: 0; margin-bottom: 10px;"></textarea>
         </div>
-        <textarea id="diary" placeholder="diary note" rows="2" style="display: block; width: 100%; margin-top: 0; margin-bottom: 10px;"></textarea>
-      </div>
 
-      <div class="color-picker-row" id="color-picker-row">
-        <!-- Color circles will be injected here -->
-      </div>
+        <div class="color-picker-row" id="color-picker-row">
+          <!-- Color circles will be injected here -->
+        </div>
 
-      <input type="hidden" id="bgImage" name="bgImage" value="blackband.png" />
-      <button type="submit" class="star-submit">update band</button>
-      <button type="button" id="star-delete">delete band</button>
-    </form>
+        <input type="hidden" id="bgImage" name="bgImage" value="blackband.png" />
+        <button type="submit" class="star-submit">update band</button>
+        <button type="button" id="star-delete">delete band</button>
+      </form>
+    </div>
   </main>
 
   <!-- Firebase config and app logic -->

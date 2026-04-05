@@ -10,6 +10,11 @@ const festivalNameInput = document.getElementById('festival-name');
 const customDateInput = document.getElementById('custom-date');
 const diaryInput = document.getElementById('diary');
 const bgInput = document.getElementById('bgImage');
+const loadingEl = document.getElementById('page-loading');
+
+function hidePageLoader() {
+  if (loadingEl) loadingEl.classList.add('is-hidden');
+}
 
 function autoResizeDiary() {
   if (!diaryInput) return;
@@ -38,6 +43,8 @@ onAuthStateChanged(auth, user => {
     form.querySelectorAll('input,textarea,button').forEach(el => el.disabled = true);
     return;
   }
+
+  hidePageLoader();
   currentUser = user;
 });
 

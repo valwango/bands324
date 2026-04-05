@@ -17,6 +17,13 @@ const dateInput = document.getElementById("custom-date");
 const diaryInput = document.getElementById("diary");
 const bgInput = document.getElementById("bgImage");
 const deleteBtn = document.getElementById("star-delete");
+const loadingEl = document.getElementById("page-loading");
+const showContentEl = document.getElementById("show-content");
+
+function setPageReady() {
+  if (loadingEl) loadingEl.classList.add("is-hidden");
+  if (showContentEl) showContentEl.classList.remove("is-hidden");
+}
 
 function autoResizeDiary() {
   if (!diaryInput) return;
@@ -70,9 +77,12 @@ onAuthStateChanged(auth, async (user) => {
       }
     });
 
+    setPageReady();
+
   } catch (err) {
     console.error("Load failed:", err);
     alert("Failed to load show data");
+    setPageReady();
   }
 
   // -------------------

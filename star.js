@@ -12,6 +12,11 @@ const form = document.getElementById('add-show-form');
 const diaryInput = document.getElementById('diary'); // <textarea id="diary">
 const customDateInput = document.getElementById('custom-date');
 const bgInput = document.getElementById('bgImage');
+const loadingEl = document.getElementById('page-loading');
+
+function hidePageLoader() {
+  if (loadingEl) loadingEl.classList.add('is-hidden');
+}
 
 function autoResizeDiary() {
   if (!diaryInput) return;
@@ -30,6 +35,8 @@ onAuthStateChanged(auth, user=>{
     form.querySelectorAll('input,textarea,button').forEach(el=>el.disabled=true);
     return;
   }
+
+  hidePageLoader();
 
   form.addEventListener('submit', async e=>{
     e.preventDefault();
