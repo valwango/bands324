@@ -635,6 +635,80 @@ input[type="date"]::-webkit-datetime-edit-year-field {
   margin-right: auto;
   text-align: center;
 }
+
+/* Festival Color Picker as Grid */
+#color-picker-fest {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  gap: 8px; /* space between circles */
+  justify-items: center; /* centers each circle in its cell */
+  margin: 10px auto;
+  max-width: 220px; /* optional, matches your input width */
+}
+
+.color-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.color-circle.selected {
+  border-color: white; /* or any highlight color you like */
+}
+
+/* Artist row flex container */
+.artist-input-wrap {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 10px;
+  align-items: center; /* vertically center input + button */
+}
+
+/* Dynamically added input width */
+.artist-input-wrap input.star-input {
+  width: 220px; /* same as your standard star-input */
+  text-align: center;
+}
+
+/* "+" add artist button (first row) */
+#add-artist-btn {
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+  line-height: 24px;
+  padding: 0;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#add-artist-btn:hover {
+  background: #45a049;
+}
+
+/* "×" remove button for dynamically added rows */
+.remove-artist-btn {
+  background: #ff5f5f;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 0 8px;
+  font-weight: bold;
+  border-radius: 4px;
+  height: 40px;
+}
+
+.remove-artist-btn:hover {
+  background: #ff2f2f;
+}
+
 .star-date-fake,
 .star-date-real {
   border: none !important;
@@ -665,7 +739,9 @@ input[type="date"]::-webkit-datetime-edit-year-field {
   pointer-events: none;
 }
 
-.star-submit {
+.star-submit,
+.star-delete,
+#star-delete {
   padding: 8px 18px;
   font-size: 1rem;
   font-family: 'JetBrains Mono', monospace;
@@ -681,12 +757,22 @@ input[type="date"]::-webkit-datetime-edit-year-field {
   margin-left: auto;
   margin-right: auto;
 }
-.star-submit:focus {
+.star-submit:focus,
+#star-delete:focus {
   outline: none;
   background: transparent;
 }
-.star-submit:hover {
+.star-submit:hover,
+#star-delete:hover {
   background: rgba(255,255,255,0.06);
+}
+
+#star-delete:hover {
+  background: rgba(150, 70, 70, 0.28);
+}
+
+#star-delete {
+  margin-top: 10px;
 }
 
 input[type="date"] {
@@ -1198,15 +1284,15 @@ body {
   width: 100%;            /* full width of container */
   font-family: 'JetBrains Mono', monospace;
   font-weight: 500;
-  border-radius: 6px;
+  height: 0px;
   border: none;
   cursor: pointer;
-  background-color: #222;
+  background-color: transparent;
   color: #fff;
   transition: background 0.2s;
   text-align: center;
 }
 
-.profile-actions .site-btn:hover {
+/*.profile-actions .site-btn:hover {
   background-color: #555;
-}
+}*/
