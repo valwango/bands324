@@ -18,7 +18,7 @@
     </form>
   </div>
   <div class="login-signup-text">
-  don't have an account? <a href="signup.html" class="login-signup-link">sign up</a>
+  don't have an account? <a href="./signup.html" class="login-signup-link">sign up</a>
 </div>
  <script type="module">
   // Import Firebase
@@ -51,7 +51,7 @@
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      window.location.href = 'index.html';
+      window.location.href = './index.html';
     } catch (error) {
       errorDiv.textContent = "Invalid login credentials.";
     }

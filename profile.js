@@ -2,6 +2,7 @@
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged, updateProfile, updateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { goToPage } from "./navigation.js";
 
 // Elements
 const usernameInput = document.getElementById('username-input');
@@ -18,7 +19,7 @@ let submitPasswordBtn = null;
 // -------------------
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-    window.location.href = "login.html";
+    goToPage("login.html");
     return;
   }
 

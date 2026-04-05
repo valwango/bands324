@@ -4,6 +4,7 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/f
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import "./pickers.js";
 import { doc, setDoc, getDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { goToPage } from "./navigation.js";
 
 // adding log for artists
 
@@ -59,7 +60,7 @@ onAuthStateChanged(auth, user=>{
       if(diary) showData.diary = diary;
 
       await addDoc(userShowsRef, showData);
-      window.location.href='index.html';
+      goToPage("index.html");
     } catch(err){
       console.error('Error saving show:', err);
       alert('Failed to save show. Please try again.');

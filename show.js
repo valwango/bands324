@@ -3,6 +3,7 @@ import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { setSelectedDate } from "./pickers.js"; // function to update date picker
+import { goToPage } from "./navigation.js";
 
 // Get show ID from URL
 const params = new URLSearchParams(window.location.search);
@@ -20,7 +21,7 @@ const deleteBtn = document.getElementById("star-delete");
 // Wait for user auth
 onAuthStateChanged(auth, async (user) => {
   if (!user || !showId) {
-    window.location.href = "index.html";
+    goToPage("index.html");
     return;
   }
 
@@ -33,7 +34,7 @@ onAuthStateChanged(auth, async (user) => {
     const snap = await getDoc(showRef);
     if (!snap.exists()) {
       alert("Show not found");
-      window.location.href = "index.html";
+      goToPage("index.html");
       return;
     }
 
@@ -77,7 +78,7 @@ onAuthStateChanged(auth, async (user) => {
         bgImage: bgInput.value
       });
 
-      window.location.href = "index.html"; // redirect after save
+      goToPage("index.html"); // redirect after save
     } catch (err) {
       console.error("Update failed:", err);
       alert("Failed to update show");
@@ -92,7 +93,7 @@ onAuthStateChanged(auth, async (user) => {
       if (confirm("Delete this show?")) {
         try {
           await deleteDoc(showRef);
-          window.location.href = "index.html";
+          goToPage("index.html");
         } catch (err) {
           console.error("Delete failed:", err);
           alert("Failed to delete show");

@@ -2,6 +2,7 @@
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, onSnapshot, doc, setDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { goToPage } from "./navigation.js";
 
 // --------------------
 // Helpers
@@ -74,7 +75,7 @@ function createBlock(row, idx, type) {
 
   // Click to show page
   block.addEventListener('click', () => {
-    window.location.href = `show.html?id=${row.id}`;
+    goToPage("show.html", { id: row.id });
   });
 
   return block;
@@ -115,7 +116,7 @@ function createFestivalBlock(row, idx, type) {
   block.appendChild(nameDiv);
 
   block.addEventListener('click', () => {
-    window.location.href = `festival.html?id=${row.id}`;
+    goToPage("moon.html", { id: row.id });
   });
 
   return block;
@@ -181,7 +182,7 @@ function listenToUserEvents(user) {
 // --------------------
 onAuthStateChanged(auth, async (user) => {
   if(!user){
-    window.location.href = "login.html";
+    goToPage("login.html");
     return;
   }
 
@@ -197,7 +198,7 @@ const logoutBtn = document.getElementById('logout-btn');
 if(logoutBtn){
   logoutBtn.addEventListener('click', async ()=>{
     await signOut(auth);
-    window.location.href="login.html";
+    goToPage("login.html");
   });
 }
 
@@ -206,5 +207,5 @@ if(logoutBtn){
 // --------------------
 const addBtn = document.getElementById('add-block-btn');
 if(addBtn){
-  addBtn.addEventListener('click', ()=>window.location.href='star.html');
+  addBtn.addEventListener('click', ()=>goToPage("star.html"));
 }

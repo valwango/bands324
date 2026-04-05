@@ -3,6 +3,7 @@ import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, addDoc, doc, getDoc, setDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import "./pickers.js";
+import { goToPage } from "./navigation.js";
 
 const form = document.getElementById('add-show-form');
 const festivalNameInput = document.getElementById('festival-name');
@@ -122,7 +123,7 @@ form.addEventListener('submit', async e => {
     if(firstArtistInput) firstArtistInput.value = '';
     artistFields.querySelectorAll('.artist-input-wrap').forEach(row => row.remove());
 
-    window.location.href = 'index.html';
+    goToPage("index.html");
   } catch (err) {
     console.error('Error saving festival:', err);
     alert('Failed to save festival. Please try again.');
