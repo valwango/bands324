@@ -1058,7 +1058,7 @@ body {
   text-transform: uppercase;
   }
 #upcoming-list .block .days {
-  background-image: url('assets/sticky.png'), url('sticky.png');
+  background-image: url('assets/sticky.png');
 }
 /* #past-list .block .days {
   background-image: url('assets/rippedsticky.png'), url('rippedsticky.png');
