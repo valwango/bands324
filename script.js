@@ -130,8 +130,17 @@ function listenToUserEvents(user) {
   const pastBlocks = document.getElementById('past-list');
   const loadingEl = document.getElementById('blocks-loading');
 
+  const hideLoader = () => {
+    if (loadingEl) loadingEl.classList.add('is-hidden');
+  };
+
   if (loadingEl) loadingEl.classList.remove('is-hidden');
   let hasRenderedOnce = false;
+
+  // Failsafe: never leave the loader spinning forever.
+  const loaderTimeout = window.setTimeout(() => {
+    if (!hasRenderedOnce) hideLoader();
+  }, 8000);
 
   // Shows
   const showsRef = collection(db, "users", user.uid, "shows");
@@ -180,9 +189,18 @@ function listenToUserEvents(user) {
 
       if (!hasRenderedOnce) {
         hasRenderedOnce = true;
-        if (loadingEl) loadingEl.classList.add('is-hidden');
+        window.clearTimeout(loaderTimeout);
+        hideLoader();
       }
+    }, (error) => {
+      console.error('Festivals listener failed:', error);
+      window.clearTimeout(loaderTimeout);
+      hideLoader();
     });
+  }, (error) => {
+    console.error('Shows listener failed:', error);
+    window.clearTimeout(loaderTimeout);
+    hideLoader();
   });
 }
 
