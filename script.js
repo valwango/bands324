@@ -28,25 +28,38 @@ function daysUntil(dateStr) {
   return Math.round((eventDate - now)/(1000*60*60*24));
 }
 
-const venueFitCanvas = document.createElement('canvas');
-const venueFitCtx = venueFitCanvas.getContext('2d');
+const venueMeasureEl = document.createElement('span');
+venueMeasureEl.style.position = 'absolute';
+venueMeasureEl.style.visibility = 'hidden';
+venueMeasureEl.style.pointerEvents = 'none';
+venueMeasureEl.style.whiteSpace = 'nowrap';
+document.body.appendChild(venueMeasureEl);
+
+function measureVenueTextWidth(text, style, fontSizePx, letterSpacingPx) {
+  venueMeasureEl.style.fontFamily = style.fontFamily;
+  venueMeasureEl.style.fontWeight = style.fontWeight;
+  venueMeasureEl.style.fontStyle = style.fontStyle;
+  venueMeasureEl.style.textTransform = style.textTransform;
+  venueMeasureEl.style.fontSize = `${fontSizePx}px`;
+  venueMeasureEl.style.letterSpacing = `${letterSpacingPx}px`;
+  venueMeasureEl.textContent = text;
+  return venueMeasureEl.getBoundingClientRect().width;
+}
 
 function fitVenueTextMobile(venueEl) {
   if (!venueEl) return;
   if (!window.matchMedia('(max-width: 700px)').matches) return;
 
-  const rawText = (venueEl.textContent || '').trim();
+  const text = (venueEl.textContent || '').trim();
   const computed = window.getComputedStyle(venueEl);
-  const text = computed.textTransform === 'uppercase' ? rawText.toUpperCase() : rawText;
-  if (!text || !venueFitCtx) return;
+  if (!text) return;
 
-  const availableWidth = venueEl.clientWidth;
+  const availableWidth = venueEl.getBoundingClientRect().width;
   if (!availableWidth) return;
 
-  let sizePx = parseFloat(computed.fontSize) || 14;
-  const minPx = 7;
-  const stepPx = 0.5;
-  const letterSpacingPx = Number.parseFloat(computed.letterSpacing) || 0;
+  const maxPx = parseFloat(computed.fontSize) || 16;
+  const minPx = 6;
+  let letterSpacingPx = Number.parseFloat(computed.letterSpacing) || 0;
   const safetyPx = 2;
 
   venueEl.style.display = 'block';
@@ -55,16 +68,32 @@ function fitVenueTextMobile(venueEl) {
   venueEl.style.overflow = 'hidden';
   venueEl.style.textOverflow = 'ellipsis';
 
-  while (sizePx > minPx) {
-    venueFitCtx.font = `${computed.fontWeight} ${sizePx}px ${computed.fontFamily}`;
-    const measuredTextWidth = venueFitCtx.measureText(text).width;
-    const spacingWidth = Math.max(0, text.length - 1) * letterSpacingPx;
-    const totalTextWidth = measuredTextWidth + spacingWidth + safetyPx;
-    if (totalTextWidth <= availableWidth) break;
-    sizePx -= stepPx;
+  const fits = (fontSizePx, spacingPx) => {
+    const width = measureVenueTextWidth(text, computed, fontSizePx, spacingPx);
+    return width + safetyPx <= availableWidth;
+  };
+
+  // For very long venue names, remove tracking before shrinking text aggressively.
+  if (!fits(maxPx, letterSpacingPx)) {
+    letterSpacingPx = 0;
   }
 
-  venueEl.style.setProperty('font-size', `${sizePx}px`, 'important');
+  let low = minPx;
+  let high = maxPx;
+  let best = minPx;
+
+  while (high - low > 0.2) {
+    const mid = (low + high) / 2;
+    if (fits(mid, letterSpacingPx)) {
+      best = mid;
+      low = mid;
+    } else {
+      high = mid;
+    }
+  }
+
+  venueEl.style.setProperty('letter-spacing', `${letterSpacingPx}px`, 'important');
+  venueEl.style.setProperty('font-size', `${best}px`, 'important');
 }
 
 function refitAllVenuesMobile() {
