@@ -2,7 +2,7 @@
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { setSelectedDate } from "./pickers.js"; // function to update date picker
+import { setSelectedDate } from "./pickers.js?v=20260405i"; // function to update date picker
 import { goToPage } from "./navigation.js";
 
 // Get show ID from URL
