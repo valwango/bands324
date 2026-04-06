@@ -1175,9 +1175,11 @@ body {
   .block .venue {
     padding-right: 10px;
   }
-  .block .band,
-  .block .venue {
+  .block .band {
     font-size: 1rem !important;
+  }
+  .block .venue {
+    font-size: 1rem;
   }
   .past-date-label {
     font-size: 0.464rem;

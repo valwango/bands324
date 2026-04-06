@@ -62,7 +62,7 @@ function fitVenueTextMobile(venueEl) {
     sizePx -= stepPx;
   }
 
-  venueEl.style.fontSize = `${sizePx}px`;
+  venueEl.style.setProperty('font-size', `${sizePx}px`, 'important');
 }
 
 window.addEventListener('resize', () => {
