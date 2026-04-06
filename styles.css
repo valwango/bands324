@@ -529,6 +529,21 @@ input#custom-date {
   color: #fff !important;
   font-family: 'JetBrains Mono', monospace !important;
 }
+
+input#band,
+input#venue,
+input#custom-date {
+  text-align: left !important;
+}
+
+input#band::placeholder,
+input#venue::placeholder,
+input#custom-date::placeholder,
+input#band::-webkit-input-placeholder,
+input#venue::-webkit-input-placeholder,
+input#custom-date::-webkit-input-placeholder {
+  text-align: left !important;
+}
 /* Style the date input calendar UI to match site theme */
 input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(1) grayscale(1) brightness(1.5);
