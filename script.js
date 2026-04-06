@@ -28,6 +28,48 @@ function daysUntil(dateStr) {
   return Math.round((eventDate - now)/(1000*60*60*24));
 }
 
+const venueFitCanvas = document.createElement('canvas');
+const venueFitCtx = venueFitCanvas.getContext('2d');
+
+function fitVenueTextMobile(venueEl) {
+  if (!venueEl) return;
+  if (!window.matchMedia('(max-width: 700px)').matches) return;
+
+  const rawText = (venueEl.textContent || '').trim();
+  const computed = window.getComputedStyle(venueEl);
+  const text = computed.textTransform === 'uppercase' ? rawText.toUpperCase() : rawText;
+  if (!text || !venueFitCtx) return;
+
+  const availableWidth = venueEl.clientWidth;
+  if (!availableWidth) return;
+
+  let sizePx = parseFloat(computed.fontSize) || 14;
+  const minPx = 7;
+  const stepPx = 0.5;
+  const letterSpacingPx = Number.parseFloat(computed.letterSpacing) || 0;
+  const safetyPx = 2;
+
+  venueEl.style.whiteSpace = 'nowrap';
+  venueEl.style.overflow = 'hidden';
+  venueEl.style.textOverflow = 'ellipsis';
+
+  while (sizePx > minPx) {
+    venueFitCtx.font = `${computed.fontWeight} ${sizePx}px ${computed.fontFamily}`;
+    const measuredTextWidth = venueFitCtx.measureText(text).width;
+    const spacingWidth = Math.max(0, text.length - 1) * letterSpacingPx;
+    const totalTextWidth = measuredTextWidth + spacingWidth + safetyPx;
+    if (totalTextWidth <= availableWidth) break;
+    sizePx -= stepPx;
+  }
+
+  venueEl.style.fontSize = `${sizePx}px`;
+}
+
+window.addEventListener('resize', () => {
+  if (!window.matchMedia('(max-width: 700px)').matches) return;
+  document.querySelectorAll('.block .venue').forEach((el) => fitVenueTextMobile(el));
+});
+
 // --------------------
 // Star show block
 // --------------------
@@ -72,6 +114,9 @@ function createBlock(row, idx, type) {
 
   block.appendChild(bandDiv);
   block.appendChild(venueDiv);
+
+  // On mobile, shrink long venue names to fit instead of cutting them off.
+  requestAnimationFrame(() => fitVenueTextMobile(venueDiv));
 
   // Click to show page
   block.addEventListener('click', () => {

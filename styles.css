@@ -1082,13 +1082,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  left: -2px;
   font-size: 0.75rem;
   font-weight: 700;
   height: 100%;
   writing-mode: vertical-rl;
   text-orientation: mixed;
   letter-spacing: .08em;
-  margin-left: 2px;
+  margin-left: 0;
   margin-right: 2px;
   text-transform: uppercase;
   z-index: 1;
@@ -1175,7 +1177,7 @@ body {
   }
   .block .band,
   .block .venue {
-    font-size: 70%;
+    font-size: 0.9rem;
   }
   .past-date-label {
     font-size: 0.464rem;
