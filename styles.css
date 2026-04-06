@@ -806,7 +806,7 @@ input[type="date"]::-webkit-datetime-edit-year-field {
 
 #star-delete {
   margin-top: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 32px;
 }
 
 input[type="date"] {
