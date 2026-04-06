@@ -54,7 +54,9 @@ function fitVenueTextMobile(venueEl) {
   const computed = window.getComputedStyle(venueEl);
   if (!text) return;
 
-  const availableWidth = venueEl.getBoundingClientRect().width;
+  const paddingLeft = Number.parseFloat(computed.paddingLeft) || 0;
+  const paddingRight = Number.parseFloat(computed.paddingRight) || 0;
+  const availableWidth = venueEl.getBoundingClientRect().width - paddingLeft - paddingRight;
   if (!availableWidth) return;
 
   const maxPx = parseFloat(computed.fontSize) || 16;
@@ -94,6 +96,12 @@ function fitVenueTextMobile(venueEl) {
 
   venueEl.style.setProperty('letter-spacing', `${letterSpacingPx}px`, 'important');
   venueEl.style.setProperty('font-size', `${best}px`, 'important');
+
+  // Safety pass: if a specific font render still clips by a pixel or two, shrink once more.
+  while (venueEl.scrollWidth > venueEl.clientWidth && best > minPx) {
+    best -= 0.5;
+    venueEl.style.setProperty('font-size', `${best}px`, 'important');
+  }
 }
 
 function refitAllVenuesMobile() {
