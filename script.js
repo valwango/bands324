@@ -49,6 +49,8 @@ function fitVenueTextMobile(venueEl) {
   const letterSpacingPx = Number.parseFloat(computed.letterSpacing) || 0;
   const safetyPx = 2;
 
+  venueEl.style.display = 'block';
+  venueEl.style.justifyContent = 'initial';
   venueEl.style.whiteSpace = 'nowrap';
   venueEl.style.overflow = 'hidden';
   venueEl.style.textOverflow = 'ellipsis';
@@ -65,10 +67,18 @@ function fitVenueTextMobile(venueEl) {
   venueEl.style.setProperty('font-size', `${sizePx}px`, 'important');
 }
 
-window.addEventListener('resize', () => {
+function refitAllVenuesMobile() {
   if (!window.matchMedia('(max-width: 700px)').matches) return;
   document.querySelectorAll('.block .venue').forEach((el) => fitVenueTextMobile(el));
+}
+
+window.addEventListener('resize', () => {
+  refitAllVenuesMobile();
 });
+
+if (document.fonts && typeof document.fonts.ready?.then === 'function') {
+  document.fonts.ready.then(() => refitAllVenuesMobile());
+}
 
 // --------------------
 // Star show block
@@ -231,6 +241,8 @@ function listenToUserEvents(user) {
         if(ev.type === 'show') pastBlocks.appendChild(createBlock(ev, idx, 'past'));
         else if(ev.type === 'festival') pastBlocks.appendChild(createFestivalBlock(ev, idx, 'past'));
       });
+
+      requestAnimationFrame(() => refitAllVenuesMobile());
 
       if (!hasRenderedOnce) {
         hasRenderedOnce = true;
