@@ -234,11 +234,9 @@ body {
 }
 /* Profile icon button in header */
 .header-icon-btn {
-  position: absolute;
-  top: 10px;
-  left: 8px;
-  width: 100px;
-  height: 52px;
+  position: relative;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -248,25 +246,15 @@ body {
   cursor: pointer;
   z-index: 200;
   transition: background 0.2s;
-  border-radius: 50%;
-  padding-left: 60px;
-  padding-right: 0;
-  padding-top: 8px;
-  padding-bottom: 0;
+  border-radius: 0;
+  margin-left: 5vw;
+  margin-right: auto;
+  padding: 0;
 }
 
-@media (max-width: 700px) {
-  .header-icon-btn {
-    left: 2vw;
-    width: 36px;
-    height: 28.8px;
-    padding-left: 8px;
-    padding-top: 4px;
-  }
-  .header-icon-btn svg {
-    width: 28.8px;
-    height: 28.8px;
-  }
+.header-icon-btn svg {
+  width: 28px;
+  height: 28px;
 }
 /* Site-wide button style for consistency (used for logout) */
 .site-btn {
@@ -494,6 +482,7 @@ input#venue:not(:placeholder-shown),
 }
 
 #diary {
+  padding: 8px;
   min-height: 46px;
   line-height: 1.35;
   resize: none;
@@ -663,7 +652,7 @@ input[type="date"]::-webkit-datetime-edit-year-field {
   display: block;
   margin-left: auto;
   margin-right: auto;
-  text-align: center;
+  text-align: left;
 }
 
 /* Festival Color Picker as Grid */
@@ -747,15 +736,13 @@ input[type="date"]::-webkit-datetime-edit-year-field {
 .star-date-wrap {
   position: relative;
   width: 220px;
-  min-height: 24px;
+  min-height: 0;
   margin-left: auto;
   margin-right: auto;
 }
 
 .star-date-fake {
-  position: absolute;
-  left: 0;
-  top: 0;
+  position: relative;
   width: 100%;
   z-index: 2;
 }
