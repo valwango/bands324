@@ -48,74 +48,81 @@ function measureVenueTextWidth(text, style, fontSizePx, letterSpacingPx) {
 
 function fitVenueTextMobile(venueEl) {
   if (!venueEl) return;
-  if (!window.matchMedia('(max-width: 700px)').matches) return;
 
   const text = (venueEl.textContent || '').trim();
-  const computed = window.getComputedStyle(venueEl);
   if (!text) return;
 
-  const paddingLeft = Number.parseFloat(computed.paddingLeft) || 0;
-  const paddingRight = Number.parseFloat(computed.paddingRight) || 0;
-  const availableWidth = venueEl.getBoundingClientRect().width - paddingLeft - paddingRight;
-  if (!availableWidth) return;
-
-  const maxPx = parseFloat(computed.fontSize) || 16;
-  const minPx = 6;
-  let letterSpacingPx = Number.parseFloat(computed.letterSpacing) || 0;
-  const safetyPx = 2;
-
+  venueEl.style.removeProperty('font-size');
+  venueEl.style.removeProperty('letter-spacing');
   venueEl.style.display = 'block';
   venueEl.style.justifyContent = 'initial';
   venueEl.style.textAlign = 'right';
   venueEl.style.whiteSpace = 'nowrap';
-  venueEl.style.overflow = 'hidden';
-  venueEl.style.textOverflow = 'ellipsis';
+  venueEl.style.overflow = 'visible';
+  venueEl.style.textOverflow = 'clip';
+
+  const computed = window.getComputedStyle(venueEl);
+  const paddingLeft = Number.parseFloat(computed.paddingLeft) || 0;
+  const paddingRight = Number.parseFloat(computed.paddingRight) || 0;
+  const availableWidth = venueEl.clientWidth - paddingLeft - paddingRight;
+  if (availableWidth <= 0) return;
+
+  const defaultPx = Number.parseFloat(computed.fontSize) || 16;
+  const minPx = 5;
+  const defaultSpacing = Number.parseFloat(computed.letterSpacing) || 0;
 
   const fits = (fontSizePx, spacingPx) => {
     const width = measureVenueTextWidth(text, computed, fontSizePx, spacingPx);
-    return width + safetyPx <= availableWidth;
+    return width <= availableWidth;
   };
 
-  // For very long venue names, remove tracking before shrinking text aggressively.
-  if (!fits(maxPx, letterSpacingPx)) {
-    letterSpacingPx = 0;
-  }
+  if (fits(defaultPx, defaultSpacing)) return;
 
-  let low = minPx;
-  let high = maxPx;
-  let best = minPx;
+  let best = defaultPx;
+  let spacing = defaultSpacing;
 
-  while (high - low > 0.2) {
-    const mid = (low + high) / 2;
-    if (fits(mid, letterSpacingPx)) {
-      best = mid;
-      low = mid;
-    } else {
-      high = mid;
+  if (!fits(defaultPx, defaultSpacing) && fits(defaultPx, 0)) {
+    spacing = 0;
+    best = defaultPx;
+  } else {
+    let low = minPx;
+    let high = defaultPx;
+    best = minPx;
+
+    while (high - low > 0.1) {
+      const mid = (low + high) / 2;
+      if (fits(mid, 0)) {
+        best = mid;
+        low = mid;
+      } else {
+        high = mid;
+      }
     }
+
+    while (!fits(best, 0) && best > minPx) {
+      best -= 0.25;
+    }
+
+    spacing = 0;
   }
 
-  venueEl.style.setProperty('letter-spacing', `${letterSpacingPx}px`, 'important');
-  venueEl.style.setProperty('font-size', `${best}px`, 'important');
-
-  // Safety pass: if a specific font render still clips by a pixel or two, shrink once more.
-  while (venueEl.scrollWidth > venueEl.clientWidth && best > minPx) {
-    best -= 0.5;
-    venueEl.style.setProperty('font-size', `${best}px`, 'important');
-  }
+  venueEl.style.setProperty('letter-spacing', `${spacing}px`, 'important');
+  venueEl.style.setProperty('font-size', `${best.toFixed(2)}px`, 'important');
 }
 
 function refitAllVenuesMobile() {
-  if (!window.matchMedia('(max-width: 700px)').matches) return;
   document.querySelectorAll('.block .venue').forEach((el) => fitVenueTextMobile(el));
 }
 
+let venueRefitRaf = 0;
+
 window.addEventListener('resize', () => {
-  refitAllVenuesMobile();
+  cancelAnimationFrame(venueRefitRaf);
+  venueRefitRaf = requestAnimationFrame(refitAllVenuesMobile);
 });
 
 if (document.fonts && typeof document.fonts.ready?.then === 'function') {
-  document.fonts.ready.then(() => refitAllVenuesMobile());
+  document.fonts.ready.then(() => requestAnimationFrame(refitAllVenuesMobile));
 }
 
 // --------------------
