@@ -60,7 +60,7 @@ function fitVenueTextMobile(venueEl) {
   venueEl.style.justifyContent = 'initial';
   venueEl.style.textAlign = isVenue ? 'right' : 'left';
   venueEl.style.whiteSpace = 'nowrap';
-  venueEl.style.overflow = 'visible';
+  venueEl.style.overflow = 'hidden';
   venueEl.style.textOverflow = 'clip';
 
   const computed = window.getComputedStyle(venueEl);
@@ -110,6 +110,11 @@ function fitVenueTextMobile(venueEl) {
 
   venueEl.style.setProperty('letter-spacing', `${spacing}px`, 'important');
   venueEl.style.setProperty('font-size', `${best.toFixed(2)}px`, 'important');
+
+  while (venueEl.scrollWidth > venueEl.clientWidth && best > minPx) {
+    best -= 0.25;
+    venueEl.style.setProperty('font-size', `${best.toFixed(2)}px`, 'important');
+  }
 }
 
 function refitAllVenuesMobile() {
@@ -124,8 +129,14 @@ window.addEventListener('resize', () => {
 });
 
 if (document.fonts && typeof document.fonts.ready?.then === 'function') {
-  document.fonts.ready.then(() => requestAnimationFrame(refitAllVenuesMobile));
+  document.fonts.ready.then(() => {
+    requestAnimationFrame(() => requestAnimationFrame(refitAllVenuesMobile));
+  });
 }
+
+window.addEventListener('load', () => {
+  requestAnimationFrame(() => requestAnimationFrame(refitAllVenuesMobile));
+});
 
 // --------------------
 // Star show block
