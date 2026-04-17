@@ -1124,8 +1124,8 @@ body {
   font-weight: 700;
   letter-spacing: .05em;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow: visible;
+  text-overflow: clip;
   padding-left: 18px;
   flex: 1 1 0%;
   min-width: 0;

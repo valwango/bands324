@@ -52,11 +52,13 @@ function fitVenueTextMobile(venueEl) {
   const text = (venueEl.textContent || '').trim();
   if (!text) return;
 
+  const isVenue = venueEl.classList.contains('venue');
+
   venueEl.style.removeProperty('font-size');
   venueEl.style.removeProperty('letter-spacing');
   venueEl.style.display = 'block';
   venueEl.style.justifyContent = 'initial';
-  venueEl.style.textAlign = 'right';
+  venueEl.style.textAlign = isVenue ? 'right' : 'left';
   venueEl.style.whiteSpace = 'nowrap';
   venueEl.style.overflow = 'visible';
   venueEl.style.textOverflow = 'clip';
@@ -111,7 +113,7 @@ function fitVenueTextMobile(venueEl) {
 }
 
 function refitAllVenuesMobile() {
-  document.querySelectorAll('.block .venue').forEach((el) => fitVenueTextMobile(el));
+  document.querySelectorAll('.block .band, .block .venue').forEach((el) => fitVenueTextMobile(el));
 }
 
 let venueRefitRaf = 0;
@@ -170,8 +172,10 @@ function createBlock(row, idx, type) {
   block.appendChild(bandDiv);
   block.appendChild(venueDiv);
 
-  // On mobile, shrink long venue names to fit instead of cutting them off.
-  requestAnimationFrame(() => fitVenueTextMobile(venueDiv));
+  requestAnimationFrame(() => {
+    fitVenueTextMobile(bandDiv);
+    fitVenueTextMobile(venueDiv);
+  });
 
   // Click to show page
   block.addEventListener('click', () => {
@@ -214,6 +218,8 @@ function createFestivalBlock(row, idx, type) {
   nameDiv.className = 'band';
   nameDiv.textContent = name; // only show festival name
   block.appendChild(nameDiv);
+
+  requestAnimationFrame(() => fitVenueTextMobile(nameDiv));
 
   block.addEventListener('click', () => {
     goToPage("moon.html", { id: row.id });
