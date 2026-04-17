@@ -66,6 +66,7 @@ function fitVenueTextMobile(venueEl) {
 
   venueEl.style.display = 'block';
   venueEl.style.justifyContent = 'initial';
+  venueEl.style.textAlign = 'right';
   venueEl.style.whiteSpace = 'nowrap';
   venueEl.style.overflow = 'hidden';
   venueEl.style.textOverflow = 'ellipsis';
