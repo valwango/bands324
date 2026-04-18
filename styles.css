@@ -1174,14 +1174,14 @@ body {
   }
   .block .band {
     padding-left: 6px;
-  }
-  .block .venue {
-    padding-right: 10px;
-  }
-  .block .band {
+    padding-right: 4px;
+    flex: 1.2 1 0%;
     font-size: 1rem !important;
   }
   .block .venue {
+    padding-left: 10px;
+    padding-right: 10px;
+    flex: 0.8 1 0%;
     font-size: 1rem;
   }
   .past-date-label {
