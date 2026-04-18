@@ -70,12 +70,13 @@ function fitVenueTextMobile(venueEl) {
   if (availableWidth <= 0) return;
 
   const defaultPx = Number.parseFloat(computed.fontSize) || 16;
-  const minPx = 5;
+  const minPx = window.matchMedia('(max-width: 700px)').matches ? 8 : 6;
   const defaultSpacing = Number.parseFloat(computed.letterSpacing) || 0;
+  const tolerancePx = 1;
 
   const fits = (fontSizePx, spacingPx) => {
     const width = measureVenueTextWidth(text, computed, fontSizePx, spacingPx);
-    return width <= availableWidth;
+    return width <= availableWidth + tolerancePx;
   };
 
   if (fits(defaultPx, defaultSpacing)) return;
@@ -111,27 +112,44 @@ function fitVenueTextMobile(venueEl) {
   venueEl.style.setProperty('letter-spacing', `${spacing}px`, 'important');
   venueEl.style.setProperty('font-size', `${best.toFixed(2)}px`, 'important');
 
-  while (venueEl.scrollWidth > venueEl.clientWidth && best > minPx) {
+  while (venueEl.scrollWidth > venueEl.clientWidth + 1 && best > minPx) {
     best -= 0.25;
     venueEl.style.setProperty('font-size', `${best.toFixed(2)}px`, 'important');
   }
 }
 
+function refitBlockText(blockEl) {
+  if (!blockEl) return;
+  const textEls = Array.from(blockEl.querySelectorAll('.band, .venue'));
+  if (!textEls.length) return;
+
+  for (let pass = 0; pass < 3; pass += 1) {
+    textEls.forEach((el) => fitVenueTextMobile(el));
+  }
+}
+
 function refitAllVenuesMobile() {
-  document.querySelectorAll('.block .band, .block .venue').forEach((el) => fitVenueTextMobile(el));
+  document.querySelectorAll('.block').forEach((blockEl) => refitBlockText(blockEl));
 }
 
 const autoFitObservedEls = new WeakSet();
 const autoFitResizeObserver = typeof ResizeObserver === 'function'
   ? new ResizeObserver((entries) => {
-      entries.forEach((entry) => fitVenueTextMobile(entry.target));
+      const seenBlocks = new Set();
+      entries.forEach((entry) => {
+        const blockEl = entry.target.classList?.contains('block') ? entry.target : entry.target.closest('.block');
+        if (!blockEl || seenBlocks.has(blockEl)) return;
+        seenBlocks.add(blockEl);
+        requestAnimationFrame(() => refitBlockText(blockEl));
+      });
     })
   : null;
 
 function observeAutoFit(el) {
-  if (!el || !autoFitResizeObserver || autoFitObservedEls.has(el)) return;
-  autoFitObservedEls.add(el);
-  autoFitResizeObserver.observe(el);
+  const blockEl = el?.closest('.block');
+  if (!blockEl || !autoFitResizeObserver || autoFitObservedEls.has(blockEl)) return;
+  autoFitObservedEls.add(blockEl);
+  autoFitResizeObserver.observe(blockEl);
 }
 
 let venueRefitRaf = 0;
