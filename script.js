@@ -121,11 +121,26 @@ function refitAllVenuesMobile() {
   document.querySelectorAll('.block .band, .block .venue').forEach((el) => fitVenueTextMobile(el));
 }
 
+const autoFitObservedEls = new WeakSet();
+const autoFitResizeObserver = typeof ResizeObserver === 'function'
+  ? new ResizeObserver((entries) => {
+      entries.forEach((entry) => fitVenueTextMobile(entry.target));
+    })
+  : null;
+
+function observeAutoFit(el) {
+  if (!el || !autoFitResizeObserver || autoFitObservedEls.has(el)) return;
+  autoFitObservedEls.add(el);
+  autoFitResizeObserver.observe(el);
+}
+
 let venueRefitRaf = 0;
 
 window.addEventListener('resize', () => {
   cancelAnimationFrame(venueRefitRaf);
-  venueRefitRaf = requestAnimationFrame(refitAllVenuesMobile);
+  venueRefitRaf = requestAnimationFrame(() => {
+    requestAnimationFrame(refitAllVenuesMobile);
+  });
 });
 
 if (document.fonts && typeof document.fonts.ready?.then === 'function') {
@@ -184,8 +199,14 @@ function createBlock(row, idx, type) {
   block.appendChild(venueDiv);
 
   requestAnimationFrame(() => {
+    observeAutoFit(bandDiv);
+    observeAutoFit(venueDiv);
     fitVenueTextMobile(bandDiv);
     fitVenueTextMobile(venueDiv);
+    requestAnimationFrame(() => {
+      fitVenueTextMobile(bandDiv);
+      fitVenueTextMobile(venueDiv);
+    });
   });
 
   // Click to show page
@@ -230,7 +251,11 @@ function createFestivalBlock(row, idx, type) {
   nameDiv.textContent = name; // only show festival name
   block.appendChild(nameDiv);
 
-  requestAnimationFrame(() => fitVenueTextMobile(nameDiv));
+  requestAnimationFrame(() => {
+    observeAutoFit(nameDiv);
+    fitVenueTextMobile(nameDiv);
+    requestAnimationFrame(() => fitVenueTextMobile(nameDiv));
+  });
 
   block.addEventListener('click', () => {
     goToPage("moon.html", { id: row.id });
@@ -304,7 +329,9 @@ function listenToUserEvents(user) {
         else if(ev.type === 'festival') pastBlocks.appendChild(createFestivalBlock(ev, idx, 'past'));
       });
 
-      requestAnimationFrame(() => refitAllVenuesMobile());
+      requestAnimationFrame(() => {
+        requestAnimationFrame(refitAllVenuesMobile);
+      });
 
       if (!hasRenderedOnce) {
         hasRenderedOnce = true;
