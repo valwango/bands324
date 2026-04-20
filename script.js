@@ -71,9 +71,9 @@ function fitVenueTextMobile(venueEl) {
 
   const defaultPx = Number.parseFloat(computed.fontSize) || 16;
   const isMobile = window.matchMedia('(max-width: 700px)').matches;
-  const minPx = isMobile ? (isVenue ? 8 : 10) : 6;
+  const minPx = isMobile ? 8 : 6;
   const defaultSpacing = Number.parseFloat(computed.letterSpacing) || 0;
-  const tolerancePx = isMobile && !isVenue ? 2 : 1;
+  const tolerancePx = 1;
 
   const fits = (fontSizePx, spacingPx) => {
     const width = measureVenueTextWidth(text, computed, fontSizePx, spacingPx);

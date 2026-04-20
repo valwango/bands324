@@ -1142,7 +1142,7 @@ body {
   font-weight: 700;
   letter-spacing: .05em;
   white-space: nowrap;
-  overflow: visible;
+  overflow: hidden;
   text-overflow: clip;
   padding-right: 32px;
   padding-left: 18px;
@@ -1175,13 +1175,13 @@ body {
   .block .band {
     padding-left: 6px;
     padding-right: 4px;
-    flex: 1.2 1 0%;
+    flex: 1 1 0%;
     font-size: 1rem !important;
   }
   .block .venue {
-    padding-left: 10px;
+    padding-left: 4px;
     padding-right: 10px;
-    flex: 0.8 1 0%;
+    flex: 1 1 0%;
     font-size: 1rem;
   }
   .past-date-label {
