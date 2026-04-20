@@ -46,6 +46,32 @@ function measureVenueTextWidth(text, style, fontSizePx, letterSpacingPx) {
   return venueMeasureEl.getBoundingClientRect().width;
 }
 
+function getAvailableWidth(venueEl, computed) {
+  const paddingLeft = Number.parseFloat(computed.paddingLeft) || 0;
+  const paddingRight = Number.parseFloat(computed.paddingRight) || 0;
+
+  // Use the element's own width if it has been laid out.
+  const elWidth = venueEl.getBoundingClientRect().width;
+  if (elWidth > 0) return elWidth - paddingLeft - paddingRight;
+
+  // Fallback: derive from the parent block minus the sticky/days column.
+  const blockEl = venueEl.closest('.block');
+  if (!blockEl) return 0;
+  const blockWidth = blockEl.getBoundingClientRect().width;
+  if (!blockWidth) return 0;
+
+  const daysEl = blockEl.querySelector('.days');
+  const daysWidth = daysEl ? daysEl.getBoundingClientRect().width : 76;
+
+  const blockComputed = window.getComputedStyle(blockEl);
+  const blockPadL = Number.parseFloat(blockComputed.paddingLeft) || 0;
+  const blockPadR = Number.parseFloat(blockComputed.paddingRight) || 0;
+
+  // Two equal columns (band + venue) share the remaining space.
+  const remaining = blockWidth - blockPadL - blockPadR - daysWidth;
+  return Math.floor(remaining / 2) - paddingLeft - paddingRight;
+}
+
 function fitVenueTextMobile(venueEl) {
   if (!venueEl) return;
 
@@ -64,59 +90,43 @@ function fitVenueTextMobile(venueEl) {
   venueEl.style.textOverflow = 'clip';
 
   const computed = window.getComputedStyle(venueEl);
-  const paddingLeft = Number.parseFloat(computed.paddingLeft) || 0;
-  const paddingRight = Number.parseFloat(computed.paddingRight) || 0;
-  const availableWidth = venueEl.clientWidth - paddingLeft - paddingRight;
+  const availableWidth = getAvailableWidth(venueEl, computed);
   if (availableWidth <= 0) return;
 
   const defaultPx = Number.parseFloat(computed.fontSize) || 16;
-  const isMobile = window.matchMedia('(max-width: 700px)').matches;
-  const minPx = isMobile ? 8 : 6;
+  const minPx = 8;
   const defaultSpacing = Number.parseFloat(computed.letterSpacing) || 0;
-  const tolerancePx = 1;
 
   const fits = (fontSizePx, spacingPx) => {
-    const width = measureVenueTextWidth(text, computed, fontSizePx, spacingPx);
-    return width <= availableWidth + tolerancePx;
+    return measureVenueTextWidth(text, computed, fontSizePx, spacingPx) <= availableWidth;
   };
 
+  // Text fits at default size — nothing to do.
   if (fits(defaultPx, defaultSpacing)) return;
 
-  let best = defaultPx;
-  let spacing = defaultSpacing;
-
-  if (!fits(defaultPx, defaultSpacing) && fits(defaultPx, 0)) {
-    spacing = 0;
-    best = defaultPx;
-  } else {
-    let low = minPx;
-    let high = defaultPx;
-    best = minPx;
-
-    while (high - low > 0.1) {
-      const mid = (low + high) / 2;
-      if (fits(mid, 0)) {
-        best = mid;
-        low = mid;
-      } else {
-        high = mid;
-      }
-    }
-
-    while (!fits(best, 0) && best > minPx) {
-      best -= 0.25;
-    }
-
-    spacing = 0;
+  // Try removing letter-spacing first before shrinking font.
+  if (fits(defaultPx, 0)) {
+    venueEl.style.setProperty('letter-spacing', '0px', 'important');
+    return;
   }
 
-  venueEl.style.setProperty('letter-spacing', `${spacing}px`, 'important');
+  // Binary search for the largest font size that fits.
+  let low = minPx;
+  let high = defaultPx;
+  let best = minPx;
+
+  while (high - low > 0.1) {
+    const mid = (low + high) / 2;
+    if (fits(mid, 0)) {
+      best = mid;
+      low = mid;
+    } else {
+      high = mid;
+    }
+  }
+
+  venueEl.style.setProperty('letter-spacing', '0px', 'important');
   venueEl.style.setProperty('font-size', `${best.toFixed(2)}px`, 'important');
-
-  while (venueEl.scrollWidth > venueEl.clientWidth + 1 && best > minPx) {
-    best -= 0.25;
-    venueEl.style.setProperty('font-size', `${best.toFixed(2)}px`, 'important');
-  }
 }
 
 function refitBlockText(blockEl) {
