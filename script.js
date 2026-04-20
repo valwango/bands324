@@ -172,7 +172,18 @@ if (document.fonts && typeof document.fonts.ready?.then === 'function') {
 
 window.addEventListener('load', () => {
   requestAnimationFrame(() => requestAnimationFrame(refitAllVenuesMobile));
+  setTimeout(refitAllVenuesMobile, 300);
 });
+
+// Safety net: on mobile the first touch/scroll means layout is fully settled.
+let _initialInteractionDone = false;
+function _onFirstInteraction() {
+  if (_initialInteractionDone) return;
+  _initialInteractionDone = true;
+  refitAllVenuesMobile();
+}
+window.addEventListener('touchstart', _onFirstInteraction, { once: true, passive: true });
+window.addEventListener('scroll', _onFirstInteraction, { once: true, passive: true });
 
 // --------------------
 // Star show block
@@ -351,7 +362,13 @@ function listenToUserEvents(user) {
       });
 
       requestAnimationFrame(() => {
-        requestAnimationFrame(refitAllVenuesMobile);
+        requestAnimationFrame(() => {
+          refitAllVenuesMobile();
+          // On mobile the browser may not have painted/measured yet after two RAFs.
+          // A short setTimeout pushes the final pass past the first paint.
+          setTimeout(refitAllVenuesMobile, 100);
+          setTimeout(refitAllVenuesMobile, 300);
+        });
       });
 
       if (!hasRenderedOnce) {
