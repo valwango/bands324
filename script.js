@@ -145,26 +145,6 @@ function refitAllVenuesMobile() {
   document.querySelectorAll('.block').forEach((blockEl) => refitBlockText(blockEl));
 }
 
-const autoFitObservedEls = new WeakSet();
-const autoFitResizeObserver = typeof ResizeObserver === 'function'
-  ? new ResizeObserver((entries) => {
-      const seenBlocks = new Set();
-      entries.forEach((entry) => {
-        const blockEl = entry.target.classList?.contains('block') ? entry.target : entry.target.closest('.block');
-        if (!blockEl || seenBlocks.has(blockEl)) return;
-        seenBlocks.add(blockEl);
-        requestAnimationFrame(() => refitBlockText(blockEl));
-      });
-    })
-  : null;
-
-function observeAutoFit(el) {
-  const blockEl = el?.closest('.block');
-  if (!blockEl || !autoFitResizeObserver || autoFitObservedEls.has(blockEl)) return;
-  autoFitObservedEls.add(blockEl);
-  autoFitResizeObserver.observe(blockEl);
-}
-
 let venueRefitRaf = 0;
 
 window.addEventListener('resize', () => {
@@ -184,16 +164,6 @@ window.addEventListener('load', () => {
   requestAnimationFrame(() => requestAnimationFrame(refitAllVenuesMobile));
   setTimeout(refitAllVenuesMobile, 300);
 });
-
-// Safety net: on mobile the first touch/scroll means layout is fully settled.
-let _initialInteractionDone = false;
-function _onFirstInteraction() {
-  if (_initialInteractionDone) return;
-  _initialInteractionDone = true;
-  refitAllVenuesMobile();
-}
-window.addEventListener('touchstart', _onFirstInteraction, { once: true, passive: true });
-window.addEventListener('scroll', _onFirstInteraction, { once: true, passive: true });
 
 // --------------------
 // Star show block
@@ -241,14 +211,8 @@ function createBlock(row, idx, type) {
   block.appendChild(venueDiv);
 
   requestAnimationFrame(() => {
-    observeAutoFit(bandDiv);
-    observeAutoFit(venueDiv);
     fitVenueTextMobile(bandDiv);
     fitVenueTextMobile(venueDiv);
-    requestAnimationFrame(() => {
-      fitVenueTextMobile(bandDiv);
-      fitVenueTextMobile(venueDiv);
-    });
   });
 
   // Click to show page
@@ -294,9 +258,7 @@ function createFestivalBlock(row, idx, type) {
   block.appendChild(nameDiv);
 
   requestAnimationFrame(() => {
-    observeAutoFit(nameDiv);
     fitVenueTextMobile(nameDiv);
-    requestAnimationFrame(() => fitVenueTextMobile(nameDiv));
   });
 
   block.addEventListener('click', () => {
@@ -372,13 +334,9 @@ function listenToUserEvents(user) {
       });
 
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          refitAllVenuesMobile();
-          // On mobile the browser may not have painted/measured yet after two RAFs.
-          // A short setTimeout pushes the final pass past the first paint.
-          setTimeout(refitAllVenuesMobile, 100);
-          setTimeout(refitAllVenuesMobile, 300);
-        });
+        requestAnimationFrame(refitAllVenuesMobile);
+        setTimeout(refitAllVenuesMobile, 100);
+        setTimeout(refitAllVenuesMobile, 300);
       });
 
       if (!hasRenderedOnce) {
