@@ -1022,10 +1022,6 @@ body {
   display: none;
 }
 
-.block.festival {
-  background-position: 40px center;
-}
-
 .block.festival .days,
 .block.festival .days-num,
 .block.festival .days-label,
