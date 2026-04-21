@@ -7,7 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <script src="asset-version.js"></script>
+  <link rel="stylesheet" href="styles.css" id="app-stylesheet" />
+  <script>document.getElementById("app-stylesheet").href = window.assetUrl("styles.css");</script>
 </head>
 <body>
    <header class="header">
