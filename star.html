@@ -21,11 +21,15 @@
   </header>
 
   <main style="padding-bottom: 72px;">
-    <div class="star">★</div>
+    <a href="./moon.html" class="star" style="text-decoration:none;">★</a>
 
     <form id="add-show-form">
       <div style="width: 220px; margin: 0 auto;">
-        <input type="text" id="band" placeholder="artist" required class="star-input" style="display: block; width: 100%; margin-bottom: 10px;" />
+        <div id="artist-fields">
+          <div class="artist-input-wrap">
+            <input type="text" id="band" placeholder="artist" required class="star-input artist-input" />
+          </div>
+        </div>
         <input type="text" id="venue" placeholder="venue" required class="star-input" style="display: block; width: 100%; margin-bottom: 10px;" />
         <div class="star-date-wrap" style="margin-bottom: 10px; position: relative;">
           <input type="text" id="custom-date" name="date" placeholder="date" class="star-input star-date-fake" autocomplete="off" required />

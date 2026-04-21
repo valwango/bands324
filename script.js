@@ -233,16 +233,19 @@ function createBlock(row, idx, type) {
 // --------------------
 function createFestivalBlock(row, idx, type) {
   const block = document.createElement('div');
-  block.className = 'block';
+  block.className = 'block festival';
   block.tabIndex = 0;
   block.setAttribute('data-idx', idx);
   block.setAttribute('data-type', type);
 
-  const { name, date, bgImage='blacklong.png' } = row;
+  const { name, date, bgImage='blacklong.png', venue='' } = row;
   block.style.backgroundImage = `url('assets/${bgImage}')`;
+
+  const shortImage = bgImage.replace('long.png', 'short.png');
 
   const dateDiv = document.createElement('div');
   dateDiv.className = 'days';
+  dateDiv.style.backgroundImage = `url('assets/${shortImage}')`;
   if (type === 'upcoming') {
     const days = daysUntil(date);
     if (days === 0) dateDiv.textContent = 'TODAY';
@@ -250,20 +253,23 @@ function createFestivalBlock(row, idx, type) {
     else if (days > 1) dateDiv.innerHTML = `<span class="days-num">${days}</span><span class="days-label">DAYS</span>`;
     else dateDiv.textContent = date;
   } else {
-    const rippedStickies = ['rippedsticky.png','rippedsticky1.png','rippedsticky2.png'];
-    const randomSticky = rippedStickies[Math.floor(Math.random() * rippedStickies.length)];
     dateDiv.innerHTML = `<span class="past-date-label">${date}</span>`;
-    dateDiv.style.backgroundImage = `url('assets/${randomSticky}')`;
   }
   block.appendChild(dateDiv);
 
   const nameDiv = document.createElement('div');
   nameDiv.className = 'band';
-  nameDiv.textContent = name; // only show festival name
+  nameDiv.textContent = name;
   block.appendChild(nameDiv);
+
+  const venueDiv = document.createElement('div');
+  venueDiv.className = 'venue';
+  venueDiv.textContent = venue;
+  block.appendChild(venueDiv);
 
   requestAnimationFrame(() => {
     fitVenueTextMobile(nameDiv);
+    fitVenueTextMobile(venueDiv);
   });
 
   block.addEventListener('click', () => {

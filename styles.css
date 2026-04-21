@@ -373,7 +373,9 @@ input#band:not(:placeholder-shown),
 input#venue:not(:placeholder-shown),
 #diary:not(:placeholder-shown),
 input#date:not(:placeholder-shown),
-input#date-fake:not(:placeholder-shown) {
+input#date-fake:not(:placeholder-shown),
+input#festival-name:not(:placeholder-shown),
+input.artist-input:not(:placeholder-shown) {
   background: transparent !important;
 }
 input#band:focus,
@@ -381,21 +383,29 @@ input#venue:focus,
 #diary:focus,
 input#date:focus,
 input#date-fake:focus,
+input#festival-name:focus,
+input.artist-input:focus,
 input#band:active,
 input#venue:active,
 #diary:active,
 input#date:active,
-input#date-fake:active {
+input#date-fake:active,
+input#festival-name:active,
+input.artist-input:active {
   background: transparent !important;
 }
 input#band:focus,
 input#venue:focus,
 #diary:focus,
 input#custom-date:focus,
+input#festival-name:focus,
+input.artist-input:focus,
 input#band:active,
 input#venue:active,
 #diary:active,
-input#custom-date:active {
+input#custom-date:active,
+input#festival-name:active,
+input.artist-input:active {
   border: none !important;
   box-shadow: none !important;
   outline: none !important;
@@ -409,7 +419,9 @@ input#custom-date:active {
 input#band::placeholder,
 input#venue::placeholder,
 #diary::placeholder,
-input#custom-date::placeholder {
+input#custom-date::placeholder,
+input#festival-name::placeholder,
+input.artist-input::placeholder {
   color: #fff !important;
   opacity: 1 !important;
   font-family: 'JetBrains Mono', monospace !important;
@@ -418,7 +430,9 @@ input#custom-date::placeholder {
 input#band::-webkit-input-placeholder,
 input#venue::-webkit-input-placeholder,
 #diary::-webkit-input-placeholder,
-input#custom-date::-webkit-input-placeholder {
+input#custom-date::-webkit-input-placeholder,
+input#festival-name::-webkit-input-placeholder,
+input.artist-input::-webkit-input-placeholder {
   color: #fff !important;
   opacity: 1 !important;
   font-family: 'JetBrains Mono', monospace !important;
@@ -427,7 +441,9 @@ input#custom-date::-webkit-input-placeholder {
 input#band:-ms-input-placeholder,
 input#venue:-ms-input-placeholder,
 #diary:-ms-input-placeholder,
-input#custom-date:-ms-input-placeholder {
+input#custom-date:-ms-input-placeholder,
+input#festival-name:-ms-input-placeholder,
+input.artist-input:-ms-input-placeholder {
   color: #fff !important;
   opacity: 1 !important;
   font-family: 'JetBrains Mono', monospace !important;
@@ -436,7 +452,9 @@ input#custom-date:-ms-input-placeholder {
 input#band::-ms-input-placeholder,
 input#venue::-ms-input-placeholder,
 #diary::-ms-input-placeholder,
-input#custom-date::-ms-input-placeholder {
+input#custom-date::-ms-input-placeholder,
+input#festival-name::-ms-input-placeholder,
+input.artist-input::-ms-input-placeholder {
   color: #fff !important;
   opacity: 1 !important;
   font-family: 'JetBrains Mono', monospace !important;
@@ -448,7 +466,9 @@ input#venue,
 #diary,
 input#custom-date,
 input#date,
-input#date-fake {
+input#date-fake,
+input#festival-name,
+input.artist-input {
   color: #fff !important;
   font-family: 'JetBrains Mono', monospace !important;
   font-size: 1rem !important;
@@ -462,7 +482,9 @@ input#date-fake {
 }
 input#band,
 input#venue,
-#diary {
+#diary,
+input#festival-name,
+input.artist-input {
   border: none !important;
   box-shadow: none !important;
   background: rgba(255,255,255,0.1) !important;
@@ -670,77 +692,70 @@ input[type="date"]::-webkit-datetime-edit-year-field {
   text-align: left;
 }
 
-/* Festival Color Picker as Grid */
+/* Festival Color Picker as Grid — matches .color-picker-row */
 #color-picker-fest {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
-  gap: 8px; /* space between circles */
-  justify-items: center; /* centers each circle in its cell */
-  margin: 10px auto;
-  max-width: 220px; /* optional, matches your input width */
-}
-
-.color-circle {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  background-size: cover;
-  background-position: center;
-  cursor: pointer;
-  border: 2px solid transparent;
-}
-
-.color-circle.selected {
-  border-color: white; /* or any highlight color you like */
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  justify-items: center;
+  align-items: center;
+  margin-top: 42px;
+  margin-bottom: 18px;
+  width: 220px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Artist row flex container */
 .artist-input-wrap {
-  display: flex;
-  justify-content: center;
-  gap: 5px;
+  position: relative;
+  width: 220px;
+  margin-left: auto;
+  margin-right: auto;
   margin-bottom: 10px;
-  align-items: center; /* vertically center input + button */
 }
 
 /* Dynamically added input width */
 .artist-input-wrap input.star-input {
-  width: 220px; /* same as your standard star-input */
-  text-align: center;
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 0;
+  padding-right: 8px;
+  padding-left: 28px;
+  box-sizing: border-box;
+  text-align: left;
 }
 
-/* "+" add artist button (first row) */
-#add-artist-btn {
-  width: 40px;
-  height: 40px;
-  font-size: 24px;
-  line-height: 24px;
-  padding: 0;
-  background: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-#add-artist-btn:hover {
-  background: #45a049;
-}
-
-/* "×" remove button for dynamically added rows */
-.remove-artist-btn {
-  background: #ff5f5f;
-  color: white;
+/* "+" add row button — left side */
+.add-row-btn {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  color: var(--muted);
   border: none;
   cursor: pointer;
-  padding: 0 8px;
-  font-weight: bold;
-  border-radius: 4px;
-  height: 40px;
+  padding: 0 2px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  line-height: 1;
+  transition: color 0.2s;
 }
 
-.remove-artist-btn:hover {
-  background: #ff2f2f;
+.add-row-btn:hover {
+  color: #fff;
+}
+
+.add-row-btn--right {
+  left: auto;
+  right: 6px;
+}
+
+.artist-input-wrap:first-child input.star-input {
+  padding-left: 8px;
+  padding-right: 28px;
 }
 
 .star-date-fake,
@@ -1001,6 +1016,17 @@ body {
   background-repeat: no-repeat;
   background-position: center;
   z-index: 10;
+}
+
+.block.festival::after {
+  display: none;
+}
+
+.block.festival .days,
+.block.festival .days-num,
+.block.festival .days-label,
+.block.festival .past-date-label {
+  color: #fff;
 }
 
 /* If you don't have a row-bg.png, this file name is used for fallback */
@@ -1295,6 +1321,35 @@ body {
   pointer-events: all;
 }
 
+.stat-modal-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat-modal-list li {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: #fff;
+  padding: 6px 10px;
+  background: #1e1e1e;
+  text-transform: lowercase;
+}
+
+#stat-modal .modal-content {
+  border-radius: 0;
+  border: none;
+}
+
+#stat-modal .close-editor {
+  border-radius: 0;
+  border: none;
+  background: transparent;
+}
+
 .modal-content {
   width: min(92vw, 460px);
   background: #121212;
@@ -1348,7 +1403,7 @@ body {
   font-weight: 900;
   background: rgba(255,255,255,0.05);
   border: none !important;
-  border-radius: 6px;
+  border-radius: 0;
   color: var(--text);
   outline: none;
   outline: none;
@@ -1392,8 +1447,12 @@ body {
   flex-direction: row;
   justify-content: center;
   gap: 32px;
-  margin: 0 auto 32px;
+  margin: 0 auto 16px;
   max-width: 360px;
+}
+
+.profile-stats.profile-stats-row2 {
+  margin-bottom: 32px;
 }
 
 .profile-stat {

@@ -38,6 +38,55 @@ onAuthStateChanged(auth, user=>{
 
   hidePageLoader();
 
+  // Dynamic guest/opener rows
+  const artistFields = document.getElementById('artist-fields');
+
+  function makeAddRowBtn(afterWrapper) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = '+';
+    btn.classList.add('add-row-btn');
+    btn.addEventListener('click', () => addArtistRow(afterWrapper));
+    return btn;
+  }
+
+  function addArtistRow(afterWrapper, initialValue = '') {
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('artist-input-wrap');
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'opener / guest';
+    input.value = initialValue;
+    input.classList.add('star-input', 'artist-input');
+    input.addEventListener('blur', () => {
+      if (!input.value.trim() && artistFields.querySelectorAll('.artist-input-wrap').length > 1) {
+        wrapper.remove();
+        syncFirstBtn();
+      }
+    });
+    const addBtn = makeAddRowBtn(wrapper);
+    wrapper.appendChild(input);
+    wrapper.appendChild(addBtn);
+    if (afterWrapper && afterWrapper.nextSibling) {
+      artistFields.insertBefore(wrapper, afterWrapper.nextSibling);
+    } else {
+      artistFields.appendChild(wrapper);
+    }
+    syncFirstBtn();
+    input.focus();
+  }
+
+  // Wire first static row
+  const firstWrap = artistFields.querySelector('.artist-input-wrap');
+  const firstAddBtn = makeAddRowBtn(firstWrap);
+  firstAddBtn.classList.add('add-row-btn--right');
+  firstWrap.appendChild(firstAddBtn);
+
+  function syncFirstBtn() {
+    const hasGuests = artistFields.querySelectorAll('.artist-input-wrap').length > 1;
+    firstAddBtn.style.display = hasGuests ? 'none' : '';
+  }
+
   form.addEventListener('submit', async e=>{
     e.preventDefault();
     const band = document.getElementById('band').value.trim();
@@ -46,6 +95,11 @@ onAuthStateChanged(auth, user=>{
     const diary = diaryInput.value.trim();
 
     if(!band || !venue || !date) return;
+
+    const guests = [...artistFields.querySelectorAll('.artist-input-wrap input')]
+      .slice(1)
+      .map(i => i.value.trim())
+      .filter(Boolean);
 
     try{
       const userShowsRef = collection(db, 'users', user.uid, 'shows');
@@ -57,6 +111,7 @@ onAuthStateChanged(auth, user=>{
         createdAt: new Date()
       };
       if(diary) showData.diary = diary;
+      if(guests.length) showData.guests = guests;
 
       await addDoc(userShowsRef, showData);
 
