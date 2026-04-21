@@ -149,6 +149,7 @@ let venueRefitRaf = 0;
 let _lastRefitWidth = 0;
 
 window.addEventListener('resize', () => {
+  if (window.matchMedia('(max-width: 700px)').matches) return;
   const w = window.innerWidth;
   if (w === _lastRefitWidth) return; // height-only change (mobile chrome show/hide)
   _lastRefitWidth = w;
