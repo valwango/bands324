@@ -1,7 +1,7 @@
 // profile.js
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged, updateProfile, updateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { goToPage } from "./navigation.js";
 
 // Elements
@@ -30,6 +30,26 @@ onAuthStateChanged(auth, async (user) => {
   const username = userDoc.exists() && userDoc.data().username ? userDoc.data().username : (user.displayName || '');
   usernameInput.value = username;
   emailInput.value = user.email;
+
+  // -------------------
+  // Stats
+  // -------------------
+  const showsSnap = await getDocs(collection(db, "users", user.uid, "shows"));
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const shows = showsSnap.docs.map(d => d.data()).filter(s => {
+    if (!s.date) return false;
+    const parts = s.date.split('/');
+    let mm = parseInt(parts[0], 10), dd = parseInt(parts[1], 10), yy = parseInt(parts[2], 10);
+    if (yy < 100) yy += 2000;
+    return new Date(yy, mm - 1, dd) < now;
+  });
+  const uniqueArtists = new Set(shows.map(s => (s.band || '').trim().toLowerCase()).filter(Boolean));
+  const uniqueVenues = new Set(shows.map(s => (s.venue || '').trim().toLowerCase()).filter(Boolean));
+
+  document.getElementById('stat-shows').textContent = shows.length;
+  document.getElementById('stat-artists').textContent = uniqueArtists.size;
+  document.getElementById('stat-venues').textContent = uniqueVenues.size;
 
   // -------------------
   // Save profile changes
