@@ -146,8 +146,12 @@ function refitAllVenuesMobile() {
 }
 
 let venueRefitRaf = 0;
+let _lastRefitWidth = 0;
 
 window.addEventListener('resize', () => {
+  const w = window.innerWidth;
+  if (w === _lastRefitWidth) return; // height-only change (mobile chrome show/hide)
+  _lastRefitWidth = w;
   cancelAnimationFrame(venueRefitRaf);
   venueRefitRaf = requestAnimationFrame(() => {
     requestAnimationFrame(refitAllVenuesMobile);
