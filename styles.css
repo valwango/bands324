@@ -1202,13 +1202,13 @@ body {
     padding-left: 6px;
     padding-right: 4px;
     flex: 1 1 0%;
-    font-size: 1rem !important;
+    font-size: .8rem !important;
   }
   .block .venue {
     padding-left: 4px;
     padding-right: 10px;
     flex: 1 1 0%;
-    font-size: 1rem;
+    font-size: .8rem;
   }
   .past-date-label {
     font-size: 0.464rem;
@@ -1219,8 +1219,8 @@ body {
     font-size: 50%;
     min-width: 0;
     box-sizing: border-box;
-    height: 44.8px;
-    min-height: 44.8px;
+    height: 38px;
+    min-height: 38px;
   }
   
   .block .days-num {
