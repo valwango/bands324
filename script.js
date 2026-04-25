@@ -52,7 +52,7 @@ function getAvailableWidth(venueEl, computed) {
 
   // Use the element's own width if it has been laid out.
   const elWidth = venueEl.getBoundingClientRect().width;
-  if (elWidth > 0) return elWidth - paddingLeft - paddingRight;
+  if (elWidth > 0) return elWidth - paddingLeft - paddingRight - 1;
 
   // Fallback: derive from the parent block minus the sticky/days column.
   const blockEl = venueEl.closest('.block');
@@ -69,7 +69,7 @@ function getAvailableWidth(venueEl, computed) {
 
   // Two equal columns (band + venue) share the remaining space.
   const remaining = blockWidth - blockPadL - blockPadR - daysWidth;
-  return Math.floor(remaining / 2) - paddingLeft - paddingRight;
+  return Math.floor(remaining / 2) - paddingLeft - paddingRight - 1;
 }
 
 function fitVenueTextMobile(venueEl) {
@@ -157,6 +157,20 @@ window.addEventListener('resize', () => {
     requestAnimationFrame(refitAllVenuesMobile);
   });
 });
+
+// ResizeObserver gives reliable notification of container size changes
+// (catches mobile orientation changes, scrollbar appearing, etc.)
+if (typeof ResizeObserver !== 'undefined') {
+  let roRaf = 0;
+  const ro = new ResizeObserver(() => {
+    cancelAnimationFrame(roRaf);
+    roRaf = requestAnimationFrame(() => requestAnimationFrame(refitAllVenuesMobile));
+  });
+  ['upcoming-list', 'past-list'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) ro.observe(el);
+  });
+}
 
 if (document.fonts && typeof document.fonts.ready?.then === 'function') {
   document.fonts.ready.then(() => {
@@ -348,6 +362,7 @@ function listenToUserEvents(user) {
         setTimeout(refitAllVenuesMobile, 100);
         setTimeout(refitAllVenuesMobile, 300);
         setTimeout(refitAllVenuesMobile, 700);
+        setTimeout(refitAllVenuesMobile, 1500);
       });
 
       if (!hasRenderedOnce) {
