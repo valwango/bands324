@@ -1191,6 +1191,10 @@ body {
     font-size: 0.8rem;
   }
   .header-title-btn {
+    font-size: 0;
+  }
+  .header-title-btn::after {
+    content: 'bands';
     font-size: 1.6rem;
   }
   .header #add-block-btn {

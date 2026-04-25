@@ -149,7 +149,6 @@ let venueRefitRaf = 0;
 let _lastRefitWidth = 0;
 
 window.addEventListener('resize', () => {
-  if (window.matchMedia('(max-width: 700px)').matches) return;
   const w = window.innerWidth;
   if (w === _lastRefitWidth) return; // height-only change (mobile chrome show/hide)
   _lastRefitWidth = w;
@@ -348,6 +347,7 @@ function listenToUserEvents(user) {
         requestAnimationFrame(refitAllVenuesMobile);
         setTimeout(refitAllVenuesMobile, 100);
         setTimeout(refitAllVenuesMobile, 300);
+        setTimeout(refitAllVenuesMobile, 700);
       });
 
       if (!hasRenderedOnce) {
