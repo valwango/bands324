@@ -42,6 +42,7 @@
 
 
   <!-- Firebase + App logic -->
-  <script type="module" src="./script.js?v=20260405i"></script>
+  <script type="module" id="app-script"></script>
+  <script>document.getElementById("app-script").src = window.assetUrl("script.js");</script>
 </body>
 </html>
