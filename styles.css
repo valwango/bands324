@@ -663,16 +663,16 @@ input[type="date"]::-webkit-datetime-edit-year-field {
 @media (max-width: 400px) {
   .block .days {
     padding: 0 1px !important;
-    min-width: 60px !important;
-    width: 60px !important;
-    height: 44px !important;
+    min-width: 50px !important;
+    width: 50px !important;
+    height: 30px !important;
   }
   .block .days-num {
-    font-size: 1.3rem !important;
-    margin-left: 10px !important;
+    font-size: 1.04rem !important;
+    margin-left: 8px !important;
   }
   .block .days-label {
-    font-size: 0.6rem !important;
+    font-size: 0.48rem !important;
     margin-left: 2px !important;
     margin-right: 2px !important;
   }
@@ -1143,7 +1143,7 @@ body {
   writing-mode: vertical-rl;
   text-orientation: mixed;
   letter-spacing: .08em;
-  margin-left: 58px;
+  margin-left: 51px;
   margin-right: 2px;
   text-transform: uppercase;
   z-index: 1;
@@ -1201,7 +1201,7 @@ body {
     font-size: 0.8rem;
   }
   .header-title-btn {
-    font-size: 1.6rem;
+    font-size: 1.28rem;
   }
   .header #add-block-btn {
     font-size: 1.6rem;
@@ -1212,16 +1212,16 @@ body {
     padding-left: 6px;
     padding-right: 4px;
     flex: 1 1 0%;
-    font-size: .8rem !important;
+    font-size: .64rem !important;
   }
   .block .venue {
     padding-left: 4px;
     padding-right: 10px;
     flex: 1 1 0%;
-    font-size: .8rem;
+    font-size: .64rem;
   }
   .past-date-label {
-    font-size: 0.38rem;
+    font-size: 0.3rem;
     height: 80%;
   }
   .block {
@@ -1229,22 +1229,25 @@ body {
     font-size: 50%;
     min-width: 0;
     box-sizing: border-box;
-    height: 38px;
-    min-height: 38px;
+    height: 30px;
+    min-height: 30px;
   }
   
   .block .days {
-    height: 38px;
-    min-height: 38px;
+    height: 30px;
+    min-height: 30px;
+    min-width: 61px;
+    width: 61px;
+    flex: 0 0 61px;
   }
 
   .block .days-num {
-    font-size: 1.3rem;
+    font-size: 1.04rem;
     margin-left: 10px;
     color: #000;
   }
   .block .days-label {
-    font-size: 0.6rem;
+    font-size: 0.48rem;
     margin-left: 1.6px;
     margin-right: 1.6px;
     writing-mode: vertical-rl;
