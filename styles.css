@@ -950,6 +950,16 @@ body {
   display: none;
 }
 
+.blocks-section {
+  opacity: 1;
+  transition: opacity 0.18s ease;
+}
+
+.blocks-section--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .blocks-loading-star {
   font-size: 2rem;
   line-height: 1;

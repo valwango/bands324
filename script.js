@@ -52,7 +52,7 @@ function getAvailableWidth(venueEl, computed) {
 
   // Use the element's own width if it has been laid out.
   const elWidth = venueEl.getBoundingClientRect().width;
-  if (elWidth > 0) return elWidth - paddingLeft - paddingRight - 1;
+  if (elWidth > 0) return elWidth - paddingLeft - paddingRight - 4;
 
   // Fallback: derive from the parent block minus the sticky/days column.
   const blockEl = venueEl.closest('.block');
@@ -69,7 +69,7 @@ function getAvailableWidth(venueEl, computed) {
 
   // Two equal columns (band + venue) share the remaining space.
   const remaining = blockWidth - blockPadL - blockPadR - daysWidth;
-  return Math.floor(remaining / 2) - paddingLeft - paddingRight - 1;
+  return Math.floor(remaining / 2) - paddingLeft - paddingRight - 4;
 }
 
 function fitVenueTextMobile(venueEl) {
@@ -79,6 +79,9 @@ function fitVenueTextMobile(venueEl) {
   if (!text) return;
 
   const isVenue = venueEl.classList.contains('venue');
+
+  // Disable transition so all measurements are against the final rendered size
+  venueEl.style.transition = 'none';
 
   venueEl.style.removeProperty('font-size');
   venueEl.style.removeProperty('letter-spacing');
@@ -102,11 +105,15 @@ function fitVenueTextMobile(venueEl) {
   };
 
   // Text fits at default size — nothing to do.
-  if (fits(defaultPx, defaultSpacing)) return;
+  if (fits(defaultPx, defaultSpacing)) {
+    venueEl.style.removeProperty('transition');
+    return;
+  }
 
   // Try removing letter-spacing first before shrinking font.
   if (fits(defaultPx, 0)) {
     venueEl.style.setProperty('letter-spacing', '0px', 'important');
+    venueEl.style.removeProperty('transition');
     return;
   }
 
@@ -127,6 +134,17 @@ function fitVenueTextMobile(venueEl) {
 
   venueEl.style.setProperty('letter-spacing', '0px', 'important');
   venueEl.style.setProperty('font-size', `${best.toFixed(2)}px`, 'important');
+
+  // Verify the text actually fits after applying — scrollWidth catches
+  // subpixel/font-hinting differences the measurement span can miss.
+  let verified = best;
+  while (verified > minPx && venueEl.scrollWidth > venueEl.clientWidth) {
+    verified -= 0.5;
+    venueEl.style.setProperty('font-size', `${verified.toFixed(2)}px`, 'important');
+  }
+
+  // Re-enable transition after fitting is locked in
+  venueEl.style.removeProperty('transition');
 }
 
 function refitBlockText(blockEl) {
@@ -147,6 +165,7 @@ function refitAllVenuesMobile() {
 
 let venueRefitRaf = 0;
 let _lastRefitWidth = 0;
+let _lastContainerWidth = 0;
 
 window.addEventListener('resize', () => {
   const w = window.innerWidth;
@@ -160,11 +179,21 @@ window.addEventListener('resize', () => {
 
 // ResizeObserver gives reliable notification of container size changes
 // (catches mobile orientation changes, scrollbar appearing, etc.)
+// Use a debounced timeout instead of rAF to break feedback loops where
+// shrinking text causes another ResizeObserver notification.
 if (typeof ResizeObserver !== 'undefined') {
-  let roRaf = 0;
-  const ro = new ResizeObserver(() => {
-    cancelAnimationFrame(roRaf);
-    roRaf = requestAnimationFrame(() => requestAnimationFrame(refitAllVenuesMobile));
+  let roTimer = 0;
+  const ro = new ResizeObserver((entries) => {
+    // Check if the container's inline size actually changed (not just text reflow)
+    let newWidth = 0;
+    for (const entry of entries) {
+      const w = entry.contentRect ? entry.contentRect.width : 0;
+      if (w > newWidth) newWidth = w;
+    }
+    if (newWidth === _lastContainerWidth) return;
+    _lastContainerWidth = newWidth;
+    clearTimeout(roTimer);
+    roTimer = setTimeout(refitAllVenuesMobile, 50);
   });
   ['upcoming-list', 'past-list'].forEach(id => {
     const el = document.getElementById(id);
@@ -347,6 +376,12 @@ function listenToUserEvents(user) {
       upcomingBlocks.innerHTML = '';
       pastBlocks.innerHTML = '';
 
+      // Hide sections while refitting to prevent visible bouncing
+      const upcomingSection = document.getElementById('upcoming-section');
+      const pastSection = document.getElementById('past-section');
+      if (upcomingSection) upcomingSection.classList.add('blocks-section--hidden');
+      if (pastSection) pastSection.classList.add('blocks-section--hidden');
+
       upcoming.forEach((ev, idx) => {
         if(ev.type === 'show') upcomingBlocks.appendChild(createBlock(ev, idx, 'upcoming'));
         else if(ev.type === 'festival') upcomingBlocks.appendChild(createFestivalBlock(ev, idx, 'upcoming'));
@@ -357,12 +392,18 @@ function listenToUserEvents(user) {
         else if(ev.type === 'festival') pastBlocks.appendChild(createFestivalBlock(ev, idx, 'past'));
       });
 
+      const revealBlocks = () => {
+        if (upcomingSection) upcomingSection.classList.remove('blocks-section--hidden');
+        if (pastSection) pastSection.classList.remove('blocks-section--hidden');
+      };
+
       requestAnimationFrame(() => {
-        requestAnimationFrame(refitAllVenuesMobile);
-        setTimeout(refitAllVenuesMobile, 100);
-        setTimeout(refitAllVenuesMobile, 300);
-        setTimeout(refitAllVenuesMobile, 700);
-        setTimeout(refitAllVenuesMobile, 1500);
+        requestAnimationFrame(() => {
+          refitAllVenuesMobile();
+          setTimeout(refitAllVenuesMobile, 100);
+          setTimeout(refitAllVenuesMobile, 300);
+          setTimeout(() => { refitAllVenuesMobile(); revealBlocks(); }, 500);
+        });
       });
 
       if (!hasRenderedOnce) {
