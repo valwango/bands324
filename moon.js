@@ -2,7 +2,7 @@
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, addDoc, doc, getDoc, setDoc, updateDoc, deleteDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { setSelectedDate } from "./pickers.js?v=20260405i";
+import { setSelectedDate } from "./pickers.js?v=20260427g";
 import { goToPage } from "./navigation.js";
 
 const params = new URLSearchParams(window.location.search);
