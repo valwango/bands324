@@ -125,28 +125,32 @@ document.addEventListener('DOMContentLoaded', () => {
     // Month navigation
     const prevBtn = document.getElementById('prev-month');
     const nextBtn = document.getElementById('next-month');
-    if(prevBtn) prevBtn.onclick=e=>{
+    const prevMonth = e => {
       e.stopPropagation();
       let m=currentMonth-1; let y=currentYear;
       if(m<0){m=11;y--;}
       renderDatePicker(m,y,selectedDate);
     };
-    if(nextBtn) nextBtn.onclick=e=>{
+    const nextMonth = e => {
       e.stopPropagation();
       let m=currentMonth+1; let y=currentYear;
       if(m>11){m=0;y++;}
       renderDatePicker(m,y,selectedDate);
     };
+    if(prevBtn){ prevBtn.addEventListener('click', prevMonth); prevBtn.addEventListener('touchend', prevMonth, { passive: false }); }
+    if(nextBtn){ nextBtn.addEventListener('click', nextMonth); nextBtn.addEventListener('touchend', nextMonth, { passive: false }); }
 
     // Day selection
     if(datepicker) {
       datepicker.querySelectorAll('.custom-datepicker-day').forEach(el=>{
-        el.onclick=e=>{
+        const selectDay = e => {
           e.stopPropagation();
           selectedDate = new Date(el.getAttribute('data-date'));
           if(customDateInput) customDateInput.value = el.getAttribute('data-date');
           datepicker.style.display='none';
         };
+        el.addEventListener('click', selectDay);
+        el.addEventListener('touchend', selectDay, { passive: false });
       });
     }
   }
@@ -163,12 +167,16 @@ document.addEventListener('DOMContentLoaded', () => {
   if(customDateInput){
     customDateInput.addEventListener('focus', showPicker);
     customDateInput.addEventListener('click', showPicker);
+    customDateInput.setAttribute('readonly', 'readonly');
   }
 
-  document.addEventListener('mousedown', e=>{
+  function outsideClose(e){
     if(datepicker && !datepicker.contains(e.target) && e.target!==customDateInput){
       datepicker.style.display='none';
     }
-  });
+  }
+
+  document.addEventListener('mousedown', outsideClose);
+  document.addEventListener('touchstart', outsideClose, { passive: true });
 
 }); // DOMContentLoaded
