@@ -166,6 +166,7 @@ function refitAllVenuesMobile() {
 let venueRefitRaf = 0;
 let _lastRefitWidth = 0;
 let _lastContainerWidth = 0;
+let _blocksRevealed = false;
 
 window.addEventListener('resize', () => {
   const w = window.innerWidth;
@@ -203,13 +204,15 @@ if (typeof ResizeObserver !== 'undefined') {
 
 if (document.fonts && typeof document.fonts.ready?.then === 'function') {
   document.fonts.ready.then(() => {
-    requestAnimationFrame(() => requestAnimationFrame(refitAllVenuesMobile));
+    if (!_blocksRevealed) requestAnimationFrame(() => requestAnimationFrame(refitAllVenuesMobile));
   });
 }
 
 window.addEventListener('load', () => {
-  requestAnimationFrame(() => requestAnimationFrame(refitAllVenuesMobile));
-  setTimeout(refitAllVenuesMobile, 300);
+  if (!_blocksRevealed) {
+    requestAnimationFrame(() => requestAnimationFrame(refitAllVenuesMobile));
+    setTimeout(() => { if (!_blocksRevealed) refitAllVenuesMobile(); }, 300);
+  }
 });
 
 // --------------------
@@ -393,16 +396,22 @@ function listenToUserEvents(user) {
       });
 
       const revealBlocks = () => {
+        _blocksRevealed = true;
         if (upcomingSection) upcomingSection.classList.remove('blocks-section--hidden');
         if (pastSection) pastSection.classList.remove('blocks-section--hidden');
       };
 
-      requestAnimationFrame(() => {
+      // Wait for fonts to load before measuring and revealing so sizes are accurate
+      const fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+      fontsReady.then(() => {
         requestAnimationFrame(() => {
-          refitAllVenuesMobile();
-          setTimeout(refitAllVenuesMobile, 100);
-          setTimeout(refitAllVenuesMobile, 300);
-          setTimeout(() => { refitAllVenuesMobile(); revealBlocks(); }, 500);
+          requestAnimationFrame(() => {
+            refitAllVenuesMobile();
+            requestAnimationFrame(() => {
+              refitAllVenuesMobile();
+              revealBlocks();
+            });
+          });
         });
       });
 
