@@ -1211,7 +1211,7 @@ body {
     font-size: .8rem;
   }
   .past-date-label {
-    font-size: 0.464rem;
+    font-size: 0.38rem;
     height: 80%;
   }
   .block {
@@ -1223,6 +1223,11 @@ body {
     min-height: 38px;
   }
   
+  .block .days {
+    height: 38px;
+    min-height: 38px;
+  }
+
   .block .days-num {
     font-size: 1.3rem;
     margin-left: 10px;
