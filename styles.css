@@ -663,18 +663,18 @@ input[type="date"]::-webkit-datetime-edit-year-field {
 @media (max-width: 400px) {
   .block .days {
     padding: 0 1px !important;
-    min-width: 50px !important;
-    width: 50px !important;
-    height: 30px !important;
+    min-width: 57.5px !important;
+    width: 57.5px !important;
+    height: 34.5px !important;
   }
   .block .days-num {
-    font-size: 1.04rem !important;
-    margin-left: 8px !important;
+    font-size: 1.2rem !important;
+    margin-left: 9.2px !important;
   }
   .block .days-label {
-    font-size: 0.48rem !important;
-    margin-left: 2px !important;
-    margin-right: 2px !important;
+    font-size: 0.55rem !important;
+    margin-left: 2.3px !important;
+    margin-right: 2.3px !important;
   }
 }
 
@@ -1198,58 +1198,59 @@ body {
 
 @media (max-width: 700px) {
   .header {
-    font-size: 0.8rem;
+    font-size: 0.92rem;
   }
   .header-title-btn {
-    font-size: 1.28rem;
+    font-size: 1.47rem;
   }
   .header #add-block-btn {
-    font-size: 1.6rem;
-    width: 28.8px;
-    height: 28.8px;
+    font-size: 1.84rem;
+    width: 33.1px;
+    height: 33.1px;
   }
   .block .band {
     padding-left: 6px;
     padding-right: 4px;
     flex: 1 1 0%;
-    font-size: .64rem !important;
+    font-size: .74rem !important;
   }
   .block .venue {
     padding-left: 4px;
     padding-right: 10px;
     flex: 1 1 0%;
-    font-size: .64rem;
+    font-size: .74rem;
   }
   .past-date-label {
-    font-size: 0.3rem;
+    font-size: 0.35rem;
     height: 80%;
+    margin-left: 59px;
   }
   .block {
     width: 100%;
     font-size: 50%;
     min-width: 0;
     box-sizing: border-box;
-    height: 30px;
-    min-height: 30px;
+    height: 34.5px;
+    min-height: 34.5px;
   }
   
   .block .days {
-    height: 30px;
-    min-height: 30px;
-    min-width: 61px;
-    width: 61px;
-    flex: 0 0 61px;
+    height: 34.5px;
+    min-height: 34.5px;
+    min-width: 70px;
+    width: 70px;
+    flex: 0 0 70px;
   }
 
   .block .days-num {
-    font-size: 1.04rem;
-    margin-left: 10px;
+    font-size: 1.2rem;
+    margin-left: 11.5px;
     color: #000;
   }
   .block .days-label {
-    font-size: 0.48rem;
-    margin-left: 1.6px;
-    margin-right: 1.6px;
+    font-size: 0.55rem;
+    margin-left: 1.8px;
+    margin-right: 1.8px;
     writing-mode: vertical-rl;
     text-orientation: mixed;
     transform: rotate(180deg);
