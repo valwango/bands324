@@ -9,9 +9,7 @@ export function setSelectedDate(date) {
   selectedDate = date instanceof Date && !Number.isNaN(date.getTime()) ? date : null;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-
-  const bgInput = document.getElementById('bgImage');
+const bgInput = document.getElementById('bgImage');
 
   // -------------------
   // Band Color Picker
@@ -176,7 +174,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  document.addEventListener('mousedown', outsideClose);
-  document.addEventListener('touchstart', outsideClose, { passive: true });
-
-}); // DOMContentLoaded
+document.addEventListener('mousedown', outsideClose);
+document.addEventListener('touchstart', outsideClose, { passive: true });
