@@ -55,8 +55,7 @@
   </main>
 
   <!-- Firebase config and app logic -->
-  <script type="module" id="app-script"></script>
-  <script>document.getElementById("app-script").src = window.assetUrl("show.js");</script>
+  <script type="module">import(window.assetUrl("show.js"));</script>
 
 </body>
 </html>

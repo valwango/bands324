@@ -48,8 +48,7 @@
   </main>
 
   <!-- Firebase config and app logic -->
-  <script type="module" id="app-script"></script>
-  <script>document.getElementById("app-script").src = window.assetUrl("star.js");</script>
+  <script type="module">import(window.assetUrl("star.js"));</script>
 
 </body>
 </html>

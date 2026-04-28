@@ -60,7 +60,6 @@
     </form>
   </main>
 
-  <script type="module" id="app-script"></script>
-  <script>document.getElementById("app-script").src = window.assetUrl("moon.js");</script>
+  <script type="module">import(window.assetUrl("moon.js"));</script>
 </body>
 </html>
