@@ -690,6 +690,9 @@ input[type="date"]::-webkit-datetime-edit-year-field {
   margin-left: auto;
   margin-right: auto;
   text-align: left;
+  border-radius: 0;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 /* Festival Color Picker as Grid — matches .color-picker-row */
