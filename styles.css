@@ -663,8 +663,8 @@ input[type="date"]::-webkit-datetime-edit-year-field {
 @media (max-width: 400px) {
   .block .days {
     padding: 0 1px !important;
-    min-width: 57.5px !important;
-    width: 57.5px !important;
+    min-width: 55px !important;
+    width: 55px !important;
     height: 34.5px !important;
   }
   .block .days-num {
@@ -672,7 +672,7 @@ input[type="date"]::-webkit-datetime-edit-year-field {
     margin-left: 9.2px !important;
   }
   .block .days-label {
-    font-size: 0.55rem !important;
+    font-size: 0.44rem !important;
     margin-left: 2.3px !important;
     margin-right: 2.3px !important;
   }
@@ -1223,7 +1223,7 @@ body {
   .past-date-label {
     font-size: 0.35rem;
     height: 80%;
-    margin-left: 59px;
+    margin-left: 49px;
   }
   .block {
     width: 100%;
@@ -1237,9 +1237,10 @@ body {
   .block .days {
     height: 34.5px;
     min-height: 34.5px;
-    min-width: 70px;
-    width: 70px;
-    flex: 0 0 70px;
+    min-width: 55px;
+    width: 55px;
+    flex: 0 0 55px;
+    margin-left: 5px;
   }
 
   .block .days-num {
@@ -1248,7 +1249,7 @@ body {
     color: #000;
   }
   .block .days-label {
-    font-size: 0.55rem;
+    font-size: 0.44rem;
     margin-left: 1.8px;
     margin-right: 1.8px;
     writing-mode: vertical-rl;
