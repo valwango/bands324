@@ -283,33 +283,41 @@ function createFestivalBlock(row, idx, type) {
   block.setAttribute('data-idx', idx);
   block.setAttribute('data-type', type);
 
-  const { name, date, bgImage='blacklong.png', venue='' } = row;
+  const { name, date, bgImage='blackband.png', venue='' } = row;
   block.style.backgroundImage = `url('assets/${bgImage}')`;
 
-  const shortImage = bgImage.replace('long.png', 'short.png');
-
+  // Days column: use sticky for upcoming, ripped sticky for past
   const dateDiv = document.createElement('div');
   dateDiv.className = 'days';
-  dateDiv.style.backgroundImage = `url('assets/${shortImage}')`;
   if (type === 'upcoming') {
+    dateDiv.style.backgroundImage = `url('assets/sticky.png')`;
     const days = daysUntil(date);
     if (days === 0) dateDiv.textContent = 'TODAY';
     else if (days === 1) dateDiv.innerHTML = `<span class="days-num">1</span><span class="days-label">DAY</span>`;
     else if (days > 1) dateDiv.innerHTML = `<span class="days-num">${days}</span><span class="days-label">DAYS</span>`;
     else dateDiv.textContent = date;
   } else {
+    const rippedStickies = ['rippedsticky.png','rippedsticky1.png','rippedsticky2.png'];
+    const randomSticky = rippedStickies[Math.floor(Math.random() * rippedStickies.length)];
     dateDiv.innerHTML = `<span class="past-date-label">${date}</span>`;
+    dateDiv.style.backgroundImage = `url('assets/${randomSticky}')`;
   }
   block.appendChild(dateDiv);
 
   const nameDiv = document.createElement('div');
   nameDiv.className = 'band';
   nameDiv.textContent = name;
-  block.appendChild(nameDiv);
 
   const venueDiv = document.createElement('div');
   venueDiv.className = 'venue';
   venueDiv.textContent = venue;
+
+  if (bgImage.toLowerCase() === 'yellow.png' || bgImage.toLowerCase() === 'neonyellow.png') {
+    nameDiv.classList.add('band-venue-dropshadow');
+    venueDiv.classList.add('band-venue-dropshadow');
+  }
+
+  block.appendChild(nameDiv);
   block.appendChild(venueDiv);
 
   requestAnimationFrame(() => {
@@ -318,7 +326,7 @@ function createFestivalBlock(row, idx, type) {
   });
 
   block.addEventListener('click', () => {
-    goToPage("moon.html", { id: row.id });
+    goToPage("show.html", { id: row.id, type: 'festival' });
   });
 
   return block;

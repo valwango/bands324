@@ -1083,14 +1083,14 @@ body {
 }
 
 .block.festival::after {
-  display: none;
+  display: block;
 }
 
 .block.festival .days,
 .block.festival .days-num,
 .block.festival .days-label,
 .block.festival .past-date-label {
-  color: #fff;
+  color: #000;
 }
 
 /* If you don't have a row-bg.png, this file name is used for fallback */

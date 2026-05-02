@@ -5,9 +5,11 @@ import { doc, getDoc, updateDoc, deleteDoc, collection, addDoc } from "https://w
 import { setSelectedDate } from "./pickers.js?v=20260427g"; // function to update date picker
 import { goToPage } from "./navigation.js";
 
-// Get show ID from URL
+// Get show ID and type from URL
 const params = new URLSearchParams(window.location.search);
 const showId = params.get("id");
+const entryType = params.get("type"); // 'festival' or null
+const isLoadingFestival = entryType === 'festival';
 
 // Form elements
 const form = document.getElementById("add-show-form");
@@ -36,6 +38,17 @@ function toggleFestivalMode(fest) {
   if (fest && !festNameInput.value && bandInput) festNameInput.value = bandInput.value;
   if (concertBtn) concertBtn.classList.toggle('type-toggle-btn--active', !fest);
   if (festivalBtn) festivalBtn.classList.toggle('type-toggle-btn--active', fest);
+  // toggle + button position and placeholders
+  if (fest) {
+    firstAddBtn.classList.remove('add-row-btn--right');
+    artistFields.classList.add('artist-fields--festival');
+  } else {
+    firstAddBtn.classList.add('add-row-btn--right');
+    artistFields.classList.remove('artist-fields--festival');
+  }
+  artistFields.querySelectorAll('.artist-input-wrap:not(:first-child) .artist-input').forEach(inp => {
+    inp.placeholder = fest ? 'artist' : 'opener / guest';
+  });
 }
 
 if (concertBtn) concertBtn.addEventListener('click', () => toggleFestivalMode(false));
@@ -55,7 +68,7 @@ function addArtistRow(afterWrapper, initialValue = '') {
   wrapper.classList.add('artist-input-wrap');
   const input = document.createElement('input');
   input.type = 'text';
-  input.placeholder = 'opener / guest';
+  input.placeholder = isFestival ? 'artist' : 'opener / guest';
   input.value = initialValue;
   input.classList.add('star-input', 'artist-input');
   input.addEventListener('blur', () => {
@@ -111,50 +124,64 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   const showRef = doc(db, "users", user.uid, "shows", showId);
+  const festivalRef = doc(db, "users", user.uid, "festivals", showId);
+  const docRef = isLoadingFestival ? festivalRef : showRef;
 
   // -------------------
   // LOAD DATA
   // -------------------
   try {
-    const snap = await getDoc(showRef);
+    const snap = await getDoc(docRef);
     if (!snap.exists()) {
-      alert("Show not found");
+      alert("Entry not found");
       goToPage("index.html");
       return;
     }
 
     const data = snap.data();
 
-    // Populate form fields
-    bandInput.value = data.band || "";
-    venueInput.value = data.venue || "";
-    dateInput.value = data.date || "";
-    diaryInput.value = data.diary || "";
-    bgInput.value = data.bgImage || "blackband.png";
-    autoResizeDiary();
-
-    // Load existing guests
-    if (data.guests && data.guests.length) {
-      data.guests.forEach(g => addArtistRow(artistFields.lastElementChild, g));
-      syncFirstBtn();
+    if (isLoadingFestival) {
+      // Populate festival fields
+      toggleFestivalMode(true);
+      document.getElementById('festival-name').value = data.name || '';
+      venueInput.value = data.venue || '';
+      dateInput.value = data.date || '';
+      diaryInput.value = data.diary || '';
+      bgInput.value = data.bgImage || 'blackband.png';
+      autoResizeDiary();
+      // Load artists: first goes in #band input, rest as additional rows
+      const artists = data.artists || [];
+      if (artists[0]) bandInput.value = artists[0];
+      if (artists.length > 1) {
+        artists.slice(1).forEach(name => addArtistRow(artistFields.lastElementChild, name));
+        syncFirstBtn();
+      }
+    } else {
+      // Populate show fields
+      bandInput.value = data.band || "";
+      venueInput.value = data.venue || "";
+      dateInput.value = data.date || "";
+      diaryInput.value = data.diary || "";
+      bgInput.value = data.bgImage || "blackband.png";
+      autoResizeDiary();
+      if (data.guests && data.guests.length) {
+        data.guests.forEach(g => addArtistRow(artistFields.lastElementChild, g));
+        syncFirstBtn();
+      }
     }
 
-    // Set date picker correctly
+    // Set date picker and color picker
     if (data.date) setSelectedDate(new Date(data.date));
-
-    // Update color picker selection visually
     document.querySelectorAll('.color-circle').forEach(circle => {
       circle.classList.remove('selected');
-      if (circle.style.backgroundImage.includes(data.bgImage)) {
-        circle.classList.add('selected');
-      }
+      if (circle.style.backgroundImage.includes(data.bgImage)) circle.classList.add('selected');
     });
 
     setPageReady();
 
   } catch (err) {
     console.error("Load failed:", err);
-    alert("Failed to load show data");
+    alert("Failed to load data");
     setPageReady();
   }
 
@@ -165,41 +192,43 @@ onAuthStateChanged(auth, async (user) => {
     e.preventDefault();
 
     try {
-      const guests = [...artistFields.querySelectorAll('.artist-input-wrap input')]
-        .slice(1)
-        .map(i => i.value.trim())
-        .filter(Boolean);
+      const venue = venueInput.value.trim();
+      const date = dateInput.value.trim();
+      const diary = diaryInput.value.trim();
+      const bgImage = bgInput.value || 'blackband.png';
 
       if (isFestival) {
         const festivalName = document.getElementById('festival-name').value.trim();
         const artistArray = [...artistFields.querySelectorAll('.artist-input')]
           .map(i => i.value.trim()).filter(Boolean);
         if (!festivalName) return;
-        await addDoc(collection(db, 'users', user.uid, 'festivals'), {
-          name: festivalName,
-          venue: venueInput.value.trim(),
-          date: dateInput.value.trim(),
-          diary: diaryInput.value.trim(),
-          bgImage: bgInput.value || 'blackband.png',
-          artists: artistArray,
-          createdAt: new Date()
-        });
-        await deleteDoc(showRef);
+        const festData = { name: festivalName, venue, date, diary, bgImage, artists: artistArray };
+        if (isLoadingFestival) {
+          // update existing festival
+          await updateDoc(festivalRef, festData);
+        } else {
+          // convert show → festival
+          await addDoc(collection(db, 'users', user.uid, 'festivals'), { ...festData, createdAt: new Date() });
+          await deleteDoc(showRef);
+        }
       } else {
-        await updateDoc(showRef, {
-          band: bandInput.value.trim(),
-          venue: venueInput.value.trim(),
-          date: dateInput.value.trim(),
-          diary: diaryInput.value.trim(),
-          bgImage: bgInput.value,
-          guests
-        });
+        const guests = [...artistFields.querySelectorAll('.artist-input-wrap input')]
+          .slice(1).map(i => i.value.trim()).filter(Boolean);
+        const showData = { band: bandInput.value.trim(), venue, date, diary, bgImage, guests };
+        if (isLoadingFestival) {
+          // convert festival → show
+          await addDoc(collection(db, 'users', user.uid, 'shows'), { ...showData, createdAt: new Date() });
+          await deleteDoc(festivalRef);
+        } else {
+          // update existing show
+          await updateDoc(showRef, showData);
+        }
       }
 
       goToPage("index.html");
     } catch (err) {
       console.error("Update failed:", err);
-      alert("Failed to update show");
+      alert("Failed to update");
     }
   });
 
@@ -208,13 +237,13 @@ onAuthStateChanged(auth, async (user) => {
   // -------------------
   if (deleteBtn) {
     deleteBtn.addEventListener("click", async () => {
-      if (confirm("Delete this show?")) {
+      if (confirm("Delete this entry?")) {
         try {
-          await deleteDoc(showRef);
+          await deleteDoc(docRef);
           goToPage("index.html");
         } catch (err) {
           console.error("Delete failed:", err);
-          alert("Failed to delete show");
+          alert("Failed to delete");
         }
       }
     });
