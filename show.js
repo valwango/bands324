@@ -148,7 +148,6 @@ onAuthStateChanged(auth, async (user) => {
       dateInput.value = data.date || '';
       diaryInput.value = data.diary || '';
       bgInput.value = data.bgImage || 'blackband.png';
-      autoResizeDiary();
       // Load artists: first goes in #band input, rest as additional rows
       const artists = data.artists || [];
       if (artists[0]) bandInput.value = artists[0];
@@ -163,7 +162,6 @@ onAuthStateChanged(auth, async (user) => {
       dateInput.value = data.date || "";
       diaryInput.value = data.diary || "";
       bgInput.value = data.bgImage || "blackband.png";
-      autoResizeDiary();
       if (data.guests && data.guests.length) {
         data.guests.forEach(g => addArtistRow(artistFields.lastElementChild, g));
         syncFirstBtn();
@@ -178,6 +176,7 @@ onAuthStateChanged(auth, async (user) => {
     });
 
     setPageReady();
+    autoResizeDiary();
 
   } catch (err) {
     console.error("Load failed:", err);
