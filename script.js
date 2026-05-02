@@ -384,6 +384,7 @@ function listenToUserEvents(user) {
       upcoming.sort((a,b)=>parseDate(a.date)-parseDate(b.date));
       past.sort((a,b)=>parseDate(b.date)-parseDate(a.date));
 
+      if (!upcomingBlocks || !pastBlocks) return;
       upcomingBlocks.innerHTML = '';
       pastBlocks.innerHTML = '';
 
