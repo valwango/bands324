@@ -795,6 +795,33 @@ input[type="date"]::-webkit-datetime-edit-year-field {
   pointer-events: none;
 }
 
+.type-toggle-row {
+  display: flex;
+  gap: 0;
+  margin-bottom: 10px;
+}
+
+.type-toggle-btn {
+  flex: 1;
+  padding: 8px;
+  font-size: 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: inherit;
+  background: rgba(0,0,0,0.25);
+  border: none;
+  outline: none;
+  color: inherit;
+  cursor: pointer;
+  border-radius: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: background 0.15s;
+}
+
+.type-toggle-btn--active {
+  background: rgba(255,255,255,0.15);
+}
+
 .festival-toggle-label {
   display: flex;
   align-items: center;

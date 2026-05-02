@@ -30,6 +30,11 @@
 
       <form id="add-show-form">
         <div style="width: 220px; margin: 0 auto;">
+          <div class="type-toggle-row">
+            <button type="button" id="is-concert" class="type-toggle-btn type-toggle-btn--active">concert</button>
+            <button type="button" id="is-festival" class="type-toggle-btn">festival</button>
+          </div>
+          <input type="text" id="festival-name" placeholder="festival" class="star-input" style="display:none; width:100%; margin-bottom:10px;" />
           <div id="artist-fields">
             <div class="artist-input-wrap">
               <input type="text" id="band" placeholder="artist" required class="star-input artist-input" />

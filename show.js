@@ -1,7 +1,7 @@
 // show.js
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { doc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { doc, getDoc, updateDoc, deleteDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { setSelectedDate } from "./pickers.js?v=20260427g"; // function to update date picker
 import { goToPage } from "./navigation.js";
 
@@ -20,6 +20,26 @@ const deleteBtn = document.getElementById("star-delete");
 const loadingEl = document.getElementById("page-loading");
 const showContentEl = document.getElementById("show-content");
 const artistFields = document.getElementById("artist-fields");
+
+let isFestival = false;
+const concertBtn = document.getElementById('is-concert');
+const festivalBtn = document.getElementById('is-festival');
+
+function toggleFestivalMode(fest) {
+  isFestival = fest;
+  const festNameInput = document.getElementById('festival-name');
+  const submitBtn = form.querySelector('.star-submit');
+  festNameInput.style.display = fest ? '' : 'none';
+  if (bandInput) bandInput.required = !fest;
+  festNameInput.required = fest;
+  submitBtn.textContent = fest ? 'update festival' : 'update band';
+  if (fest && !festNameInput.value && bandInput) festNameInput.value = bandInput.value;
+  if (concertBtn) concertBtn.classList.toggle('type-toggle-btn--active', !fest);
+  if (festivalBtn) festivalBtn.classList.toggle('type-toggle-btn--active', fest);
+}
+
+if (concertBtn) concertBtn.addEventListener('click', () => toggleFestivalMode(false));
+if (festivalBtn) festivalBtn.addEventListener('click', () => toggleFestivalMode(true));
 
 function makeAddRowBtn(afterWrapper) {
   const btn = document.createElement('button');
@@ -150,16 +170,33 @@ onAuthStateChanged(auth, async (user) => {
         .map(i => i.value.trim())
         .filter(Boolean);
 
-      await updateDoc(showRef, {
-        band: bandInput.value.trim(),
-        venue: venueInput.value.trim(),
-        date: dateInput.value.trim(),
-        diary: diaryInput.value.trim(),
-        bgImage: bgInput.value,
-        guests
-      });
+      if (isFestival) {
+        const festivalName = document.getElementById('festival-name').value.trim();
+        const artistArray = [...artistFields.querySelectorAll('.artist-input')]
+          .map(i => i.value.trim()).filter(Boolean);
+        if (!festivalName) return;
+        await addDoc(collection(db, 'users', user.uid, 'festivals'), {
+          name: festivalName,
+          venue: venueInput.value.trim(),
+          date: dateInput.value.trim(),
+          diary: diaryInput.value.trim(),
+          bgImage: bgInput.value || 'blackband.png',
+          artists: artistArray,
+          createdAt: new Date()
+        });
+        await deleteDoc(showRef);
+      } else {
+        await updateDoc(showRef, {
+          band: bandInput.value.trim(),
+          venue: venueInput.value.trim(),
+          date: dateInput.value.trim(),
+          diary: diaryInput.value.trim(),
+          bgImage: bgInput.value,
+          guests
+        });
+      }
 
-      goToPage("index.html"); // redirect after save
+      goToPage("index.html");
     } catch (err) {
       console.error("Update failed:", err);
       alert("Failed to update show");

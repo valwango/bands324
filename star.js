@@ -15,7 +15,8 @@ const bgInput = document.getElementById('bgImage');
 const loadingEl = document.getElementById('page-loading');
 
 let isFestival = false;
-const isFestivalCheckbox = document.getElementById('is-festival');
+const concertBtn = document.getElementById('is-concert');
+const festivalBtn = document.getElementById('is-festival');
 
 function toggleFestivalMode(fest) {
   isFestival = fest;
@@ -27,12 +28,15 @@ function toggleFestivalMode(fest) {
   submitBtn.textContent = fest ? 'add festival' : 'add band';
   if (bandInput) bandInput.required = !fest;
   festNameInput.required = fest;
+
+  if (concertBtn) concertBtn.classList.toggle('type-toggle-btn--active', !fest);
+  if (festivalBtn) festivalBtn.classList.toggle('type-toggle-btn--active', fest);
+
   form.dispatchEvent(new CustomEvent('festivalmode', { detail: fest }));
 }
 
-if (isFestivalCheckbox) {
-  isFestivalCheckbox.addEventListener('change', () => toggleFestivalMode(isFestivalCheckbox.checked));
-}
+if (concertBtn) concertBtn.addEventListener('click', () => toggleFestivalMode(false));
+if (festivalBtn) festivalBtn.addEventListener('click', () => toggleFestivalMode(true));
 
 function hidePageLoader() {
   if (loadingEl) loadingEl.classList.add('is-hidden');
