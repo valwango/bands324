@@ -1,7 +1,8 @@
 // star.js
-import { auth, db } from "./firebase-config.js";
+import { auth, db, storage } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, addDoc, doc, setDoc, getDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 import "./pickers.js?v=20260427g";
 import { goToPage } from "./navigation.js";
 
@@ -9,10 +10,30 @@ import { goToPage } from "./navigation.js";
 // Optional Diary + Firestore Form Submission
 // -------------------
 const form = document.getElementById('add-show-form');
-const diaryInput = document.getElementById('diary'); // <textarea id="diary">
+const diaryInput = document.getElementById('diary');
 const customDateInput = document.getElementById('custom-date');
 const bgInput = document.getElementById('bgImage');
 const loadingEl = document.getElementById('page-loading');
+
+// Photo upload
+const starPhotoBtn = document.getElementById('star-photo-btn');
+const starPhotoInput = document.getElementById('star-photo-input');
+const starPhotoImg = document.getElementById('star-photo-img');
+const starDisplay = document.getElementById('star-display');
+let pendingPhotoFile = null;
+
+if (starPhotoBtn) starPhotoBtn.addEventListener('click', () => starPhotoInput && starPhotoInput.click());
+if (starPhotoInput) {
+  starPhotoInput.addEventListener('change', () => {
+    const file = starPhotoInput.files[0];
+    if (!file) return;
+    pendingPhotoFile = file;
+    starPhotoImg.src = URL.createObjectURL(file);
+    starPhotoImg.style.display = 'block';
+    starDisplay.style.display = 'none';
+    starPhotoBtn.classList.add('star-photo-add-btn--has-photo');
+  });
+}
 
 let isFestival = false;
 const concertBtn = document.getElementById('is-concert');
@@ -137,11 +158,17 @@ onAuthStateChanged(auth, user=>{
       if (!festivalName || !date) return;
 
       try {
-        await addDoc(collection(db, 'users', user.uid, 'festivals'), {
+        const festRef = await addDoc(collection(db, 'users', user.uid, 'festivals'), {
           name: festivalName, venue, date, artists: artistArray, diary,
           bgImage: bgInput.value || 'blackband.png',
           createdAt: new Date()
         });
+        if (pendingPhotoFile) {
+          const storageRef = ref(storage, `users/${user.uid}/festivals/${festRef.id}/photo`);
+          await uploadBytes(storageRef, pendingPhotoFile);
+          const url = await getDownloadURL(storageRef);
+          await setDoc(doc(db, 'users', user.uid, 'festivals', festRef.id), { photoUrl: url }, { merge: true });
+        }
         for (const artist of artistArray) {
           const artistRef = doc(db, 'users', user.uid, 'artists', artist.toLowerCase());
           const snap = await getDoc(artistRef);
@@ -183,7 +210,14 @@ onAuthStateChanged(auth, user=>{
       if(diary) showData.diary = diary;
       if(guests.length) showData.guests = guests;
 
-      await addDoc(userShowsRef, showData);
+      const showRef = await addDoc(userShowsRef, showData);
+
+      if (pendingPhotoFile) {
+        const storageRef = ref(storage, `users/${user.uid}/shows/${showRef.id}/photo`);
+        await uploadBytes(storageRef, pendingPhotoFile);
+        const url = await getDownloadURL(storageRef);
+        await setDoc(doc(db, 'users', user.uid, 'shows', showRef.id), { photoUrl: url }, { merge: true });
+      }
 
       // Keep a per-user artist log for show appearances.
       const artistRef = doc(db, 'users', user.uid, 'artists', band.toLowerCase());

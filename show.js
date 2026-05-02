@@ -1,8 +1,9 @@
 // show.js
-import { auth, db } from "./firebase-config.js";
+import { auth, db, storage } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc, updateDoc, deleteDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { setSelectedDate } from "./pickers.js?v=20260427g"; // function to update date picker
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+import { setSelectedDate } from "./pickers.js?v=20260427g";
 import { goToPage } from "./navigation.js";
 
 // Get show ID and type from URL
@@ -105,6 +106,50 @@ function setPageReady() {
   if (showContentEl) showContentEl.classList.remove("is-hidden");
 }
 
+// -------------------
+// Photo upload
+// -------------------
+const starPhotoBtn = document.getElementById('star-photo-btn');
+const starPhotoInput = document.getElementById('star-photo-input');
+const starPhotoImg = document.getElementById('star-photo-img');
+const starDisplay = document.getElementById('star-display');
+let currentPhotoUrl = null;
+let docRef = null;
+
+function showPhoto(url) {
+  currentPhotoUrl = url;
+  starPhotoImg.src = url;
+  starPhotoImg.style.display = 'block';
+  starDisplay.style.display = 'none';
+  starPhotoBtn.classList.add('star-photo-add-btn--has-photo');
+}
+
+if (starPhotoBtn) {
+  starPhotoBtn.addEventListener('click', () => starPhotoInput && starPhotoInput.click());
+}
+
+if (starPhotoInput) {
+  starPhotoInput.addEventListener('change', async () => {
+    const file = starPhotoInput.files[0];
+    if (!file) return;
+    const user = auth.currentUser;
+    if (!user) return;
+    // Show local preview immediately
+    const localUrl = URL.createObjectURL(file);
+    showPhoto(localUrl);
+    try {
+      const storageRef = ref(storage, `users/${user.uid}/shows/${showId}/photo`);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      showPhoto(url);
+      // Persist to Firestore
+      await updateDoc(docRef, { photoUrl: url });
+    } catch (err) {
+      console.error('Photo upload failed:', err);
+    }
+  });
+}
+
 function autoResizeDiary() {
   if (!diaryInput) return;
   diaryInput.style.height = "auto";
@@ -125,7 +170,7 @@ onAuthStateChanged(auth, async (user) => {
 
   const showRef = doc(db, "users", user.uid, "shows", showId);
   const festivalRef = doc(db, "users", user.uid, "festivals", showId);
-  const docRef = isLoadingFestival ? festivalRef : showRef;
+  docRef = isLoadingFestival ? festivalRef : showRef;
 
   // -------------------
   // LOAD DATA
@@ -179,6 +224,7 @@ onAuthStateChanged(auth, async (user) => {
 
     setPageReady();
     autoResizeDiary();
+    if (data.photoUrl) showPhoto(data.photoUrl);
 
   } catch (err) {
     console.error("Load failed:", err);

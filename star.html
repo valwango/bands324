@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>add band | wripbands</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-  <script src="asset-version.js?v=20260502p"></script>
+  <script src="asset-version.js?v=20260502r"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -22,7 +22,12 @@
   </header>
 
   <main style="padding-bottom: 72px;">
-    <div class="star">★</div>
+    <div class="star-photo-wrap" id="star-photo-wrap">
+      <div class="star" id="star-display">★</div>
+      <button type="button" class="star-photo-add-btn" id="star-photo-btn" title="add photo">+</button>
+      <img class="star-photo-img" id="star-photo-img" style="display:none;" alt="show photo" />
+      <input type="file" id="star-photo-input" accept="image/*" capture="environment" style="display:none;" />
+    </div>
 
     <form id="add-show-form">
       <div style="width: 220px; margin: 0 auto;">
