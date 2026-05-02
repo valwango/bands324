@@ -14,6 +14,26 @@ const customDateInput = document.getElementById('custom-date');
 const bgInput = document.getElementById('bgImage');
 const loadingEl = document.getElementById('page-loading');
 
+let isFestival = false;
+const isFestivalCheckbox = document.getElementById('is-festival');
+
+function toggleFestivalMode(fest) {
+  isFestival = fest;
+  const festNameInput = document.getElementById('festival-name');
+  const submitBtn = form.querySelector('.star-submit');
+  const bandInput = document.getElementById('band');
+
+  festNameInput.style.display = fest ? '' : 'none';
+  submitBtn.textContent = fest ? 'add festival' : 'add band';
+  if (bandInput) bandInput.required = !fest;
+  festNameInput.required = fest;
+  form.dispatchEvent(new CustomEvent('festivalmode', { detail: fest }));
+}
+
+if (isFestivalCheckbox) {
+  isFestivalCheckbox.addEventListener('change', () => toggleFestivalMode(isFestivalCheckbox.checked));
+}
+
 function hidePageLoader() {
   if (loadingEl) loadingEl.classList.add('is-hidden');
 }
@@ -55,7 +75,7 @@ onAuthStateChanged(auth, user=>{
     wrapper.classList.add('artist-input-wrap');
     const input = document.createElement('input');
     input.type = 'text';
-    input.placeholder = 'opener / guest';
+    input.placeholder = isFestival ? 'artist' : 'opener / guest';
     input.value = initialValue;
     input.classList.add('star-input', 'artist-input');
     input.addEventListener('blur', () => {
@@ -87,8 +107,54 @@ onAuthStateChanged(auth, user=>{
     firstAddBtn.style.display = hasGuests ? 'none' : '';
   }
 
+  function applyFestivalArtistMode(fest) {
+    if (fest) {
+      firstAddBtn.classList.remove('add-row-btn--right');
+      artistFields.classList.add('artist-fields--festival');
+    } else {
+      firstAddBtn.classList.add('add-row-btn--right');
+      artistFields.classList.remove('artist-fields--festival');
+    }
+  }
+
+  form.addEventListener('festivalmode', e => applyFestivalArtistMode(e.detail));
+
   form.addEventListener('submit', async e=>{
     e.preventDefault();
+
+    if (isFestival) {
+      const festivalName = document.getElementById('festival-name').value.trim();
+      const venue = document.getElementById('venue').value.trim();
+      const date = customDateInput.value.trim();
+      const diary = diaryInput.value.trim();
+      const artistArray = [...artistFields.querySelectorAll('.artist-input')]
+        .map(i => i.value.trim()).filter(Boolean);
+
+      if (!festivalName || !date) return;
+
+      try {
+        await addDoc(collection(db, 'users', user.uid, 'festivals'), {
+          name: festivalName, venue, date, artists: artistArray, diary,
+          bgImage: bgInput.value || 'blackband.png',
+          createdAt: new Date()
+        });
+        for (const artist of artistArray) {
+          const artistRef = doc(db, 'users', user.uid, 'artists', artist.toLowerCase());
+          const snap = await getDoc(artistRef);
+          if (snap.exists()) {
+            await setDoc(artistRef, { appearances: increment(1), sources: ['festival'] }, { merge: true });
+          } else {
+            await setDoc(artistRef, { name: artist, firstSeen: new Date(), appearances: 1, sources: ['festival'] });
+          }
+        }
+        goToPage('index.html');
+      } catch(err) {
+        console.error('Error saving festival:', err);
+        alert('Failed to save festival. Please try again.');
+      }
+      return;
+    }
+
     const band = document.getElementById('band').value.trim();
     const venue = document.getElementById('venue').value.trim();
     const date = customDateInput.value.trim();
