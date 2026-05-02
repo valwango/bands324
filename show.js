@@ -172,7 +172,9 @@ onAuthStateChanged(auth, async (user) => {
     if (data.date) setSelectedDate(new Date(data.date));
     document.querySelectorAll('.color-circle').forEach(circle => {
       circle.classList.remove('selected');
-      if (circle.style.backgroundImage.includes(data.bgImage)) circle.classList.add('selected');
+      const img = circle.style.backgroundImage;
+      const match = img.match(/\/([^/]+\.png)/);
+      if (match && match[1] === data.bgImage) circle.classList.add('selected');
     });
 
     setPageReady();

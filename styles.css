@@ -369,6 +369,103 @@ input#custom-date:not(:placeholder-shown) {
 .custom-datepicker-day:hover {
   background: #666;
 }
+.custom-datepicker-month-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+.custom-datepicker-month-cell {
+  text-align: center;
+  padding: 10px 0;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 0.95em;
+  transition: background 0.2s;
+}
+.custom-datepicker-month-cell:hover {
+  background: #666;
+}
+.custom-datepicker-month-cell.selected {
+  background: #fff;
+  color: #444;
+}
+.custom-datepicker-year-overlay {
+  position: absolute;
+  inset: 0;
+  background: #444;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 8px;
+}
+.custom-datepicker-year-drum-wrap {
+  position: relative;
+  width: 100%;
+}
+.custom-datepicker-year-drum {
+  height: calc(36px * 7);
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.custom-datepicker-year-drum::-webkit-scrollbar { display: none; }
+.custom-datepicker-year-drum-cell {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: center;
+  color: rgba(255,255,255,0.3);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: color 0.1s, font-size 0.1s;
+}
+.custom-datepicker-year-drum-cell--active {
+  color: #fff;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+.custom-datepicker-year-highlight {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 36px;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.12);
+  pointer-events: none;
+}
+.custom-datepicker-year-done {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.35);
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85em;
+  padding: 5px 20px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.custom-datepicker-year-cell {
+  padding: 8px 12px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 0.95em;
+  font-family: 'JetBrains Mono', monospace;
+  transition: background 0.15s;
+}
+.custom-datepicker-year-cell:hover {
+  background: #666;
+}
+.custom-datepicker-year-cell.selected {
+  background: #fff;
+  color: #444;
+}
 input#band:not(:placeholder-shown),
 input#venue:not(:placeholder-shown),
 #diary:not(:placeholder-shown),

@@ -68,15 +68,40 @@ onAuthStateChanged(auth, async (user) => {
     return d && d >= now;
   }).length;
 
-  const uniqueArtists = new Set([
-    ...shows.map(s => (s.band || '').trim().toLowerCase()).filter(Boolean),
-    ...shows.flatMap(s => (s.guests || []).map(g => g.trim().toLowerCase())).filter(Boolean),
-    ...festivals.flatMap(f => (f.artists || []).map(a => a.trim().toLowerCase())).filter(Boolean)
-  ]);
-  const uniqueVenues = new Set([
-    ...shows.map(s => (s.venue || '').trim().toLowerCase()).filter(Boolean),
-    ...festivals.map(f => (f.venue || '').trim().toLowerCase()).filter(Boolean)
-  ]);
+  const artistCounts = new Map();
+  const tallyArtist = name => {
+    const key = (name || '').trim().toLowerCase();
+    if (key) artistCounts.set(key, (artistCounts.get(key) || 0) + 1);
+  };
+  shows.forEach(s => {
+    tallyArtist(s.band);
+    (s.guests || []).forEach(g => tallyArtist(g));
+  });
+  festivals.forEach(f => (f.artists || []).forEach(a => tallyArtist(a)));
+  const uniqueArtists = new Set(artistCounts.keys());
+
+  const venueCounts = new Map();
+  const tallyVenue = name => {
+    const key = (name || '').trim().toLowerCase();
+    if (key) venueCounts.set(key, (venueCounts.get(key) || 0) + 1);
+  };
+  shows.forEach(s => tallyVenue(s.venue));
+  festivals.forEach(f => tallyVenue(f.venue));
+  const uniqueVenues = new Set(venueCounts.keys());
+
+  const showCounts = new Map();
+  shows.forEach(s => {
+    const key = [s.band, s.venue].filter(Boolean).map(v => v.trim().toLowerCase()).join(' @ ');
+    if (key) showCounts.set(key, (showCounts.get(key) || 0) + 1);
+  });
+
+  const festivalCounts = new Map();
+  festivals.forEach(f => {
+    const key = (f.name || '').trim().toLowerCase();
+    if (key) festivalCounts.set(key, (festivalCounts.get(key) || 0) + 1);
+  });
+
+  const upcomingCounts = new Map();
 
   document.getElementById('stat-shows').textContent = shows.length;
   document.getElementById('stat-artists').textContent = uniqueArtists.size;
@@ -87,16 +112,23 @@ onAuthStateChanged(auth, async (user) => {
   // Stat lists for modal
   const upcomingShows = allShows.filter(s => { const d = parseDateStr(s.date); return d && d >= now; });
   const upcomingFestivals = allFestivals.filter(f => { const d = parseDateStr(f.date); return d && d >= now; });
+  upcomingShows.forEach(s => {
+    const key = [s.band, s.venue].filter(Boolean).map(v => v.trim().toLowerCase()).join(' @ ');
+    if (key) upcomingCounts.set(key, (upcomingCounts.get(key) || 0) + 1);
+  });
+  upcomingFestivals.forEach(f => {
+    const key = [f.name, f.venue].filter(Boolean).map(v => v.trim().toLowerCase()).join(' @ ');
+    if (key) upcomingCounts.set(key, (upcomingCounts.get(key) || 0) + 1);
+  });
+
+  const toCountItems = map => [...map.entries()].map(([name, count]) => ({ name, count }));
 
   const statLists = {
-    'stat-shows':     { title: 'shows', items: shows.map(s => [s.band, s.venue].filter(Boolean).join(' @ ')) },
-    'stat-artists':   { title: 'artists', items: [...uniqueArtists] },
-    'stat-venues':    { title: 'venues', items: [...uniqueVenues] },
-    'stat-festivals': { title: 'festivals', items: festivals.map(f => f.name).filter(Boolean) },
-    'stat-upcoming':  { title: 'upcoming', items: [
-      ...upcomingShows.map(s => s.band).filter(Boolean),
-      ...upcomingFestivals.map(f => f.name).filter(Boolean)
-    ]}
+    'stat-shows':     { title: 'shows', items: toCountItems(showCounts) },
+    'stat-artists':   { title: 'artists', items: toCountItems(artistCounts) },
+    'stat-venues':    { title: 'venues', items: toCountItems(venueCounts) },
+    'stat-festivals': { title: 'festivals', items: toCountItems(festivalCounts) },
+    'stat-upcoming':  { title: 'upcoming', items: toCountItems(upcomingCounts) }
   };
 
   const statModal = document.getElementById('stat-modal');
@@ -105,6 +137,8 @@ onAuthStateChanged(auth, async (user) => {
   document.getElementById('close-stat-modal').onclick = () => statModal.classList.remove('open');
   statModal.addEventListener('click', e => { if (e.target === statModal) statModal.classList.remove('open'); });
 
+  const stripArticle = s => s.replace(/^(the|a|an)\s+/i, '');
+
   Object.entries(statLists).forEach(([id, { title, items }]) => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -112,7 +146,10 @@ onAuthStateChanged(auth, async (user) => {
     el.addEventListener('click', () => {
       statModalTitle.textContent = title;
       statModalList.innerHTML = items.length
-        ? items.sort().map(i => `<li>${i}</li>`).join('')
+        ? items
+            .sort((a, b) => stripArticle(a.name).localeCompare(stripArticle(b.name)))
+            .map(i => `<li style="display:flex;justify-content:space-between;gap:12px">${i.name}${i.count > 1 ? `<span style="opacity:0.5">x${i.count}</span>` : ''}</li>`)
+            .join('')
         : '<li style="color:var(--muted)">none yet</li>';
       statModal.classList.add('open');
     });
