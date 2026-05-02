@@ -1038,6 +1038,11 @@ body {
   font-size: 2rem;
   line-height: 1;
   color: #ffe066;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
   animation: blocksStarSpin 0.9s linear infinite;
   transform-origin: 50% 50%;
 }
