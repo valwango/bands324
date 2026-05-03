@@ -1488,7 +1488,7 @@ body {
   .star-photo-wrap {
     width: 12rem;
     height: 12rem;
-    margin-top: -12px;
+    margin-top: 4px !important;
   }
   .star {
     font-size: 12rem;
