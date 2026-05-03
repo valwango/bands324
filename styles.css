@@ -1273,6 +1273,17 @@ body {
   to { transform: rotate(360deg); }
 }
 
+.block-wrinkle {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 1;
+}
+
 .block {
   position: relative;
   display: flex;
@@ -1344,6 +1355,7 @@ body {
   align-items: center;
   justify-content: center;
   position: relative;
+  z-index: 2;
   border-radius: 0;
   padding: 0;
   min-height: 56px;
@@ -1448,6 +1460,8 @@ body {
   display: block;
   transition: font-size 0.2s;
   text-transform: uppercase;
+  position: relative;
+  z-index: 2;
 }
 
 .block .venue {
@@ -1467,6 +1481,8 @@ body {
   display: flex;
   transition: font-size 0.2s;
   text-transform: uppercase;
+  position: relative;
+  z-index: 2;
 }
 
 /* Drop shadow for yellow/neonyellow backgrounds */

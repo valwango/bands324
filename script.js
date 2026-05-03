@@ -260,6 +260,14 @@ function createBlock(row, idx, type) {
   block.appendChild(bandDiv);
   block.appendChild(venueDiv);
 
+  if (type === 'past') {
+    const wrinkleNum = (idx % 9) + 1;
+    const wrinkle = document.createElement('div');
+    wrinkle.className = 'block-wrinkle';
+    wrinkle.style.backgroundImage = `url('assets/wrink${wrinkleNum}.png')`;
+    block.appendChild(wrinkle);
+  }
+
   requestAnimationFrame(() => {
     fitVenueTextMobile(bandDiv);
     fitVenueTextMobile(venueDiv);
@@ -319,6 +327,14 @@ function createFestivalBlock(row, idx, type) {
 
   block.appendChild(nameDiv);
   block.appendChild(venueDiv);
+
+  if (type === 'past') {
+    const wrinkleNum = (idx % 9) + 1;
+    const wrinkle = document.createElement('div');
+    wrinkle.className = 'block-wrinkle';
+    wrinkle.style.backgroundImage = `url('assets/wrink${wrinkleNum}.png')`;
+    block.appendChild(wrinkle);
+  }
 
   requestAnimationFrame(() => {
     fitVenueTextMobile(nameDiv);
