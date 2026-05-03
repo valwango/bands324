@@ -14,4 +14,8 @@ my dad has this birthday app on his phone to track and notify him when a family 
 
 the design for what you see now on the site started in feb 2025, and the coding process has been going since then. 
 
-the priority was making a site that fit all of my demands as a concertgoer, bc i feel like im pretty picky. now that this site is no longer just my own personal log and i am now sharing it with other people, it important for me to take other users' feedback into account too. i'm all ears, please do share any and every thought about wripbands with me and i'd love to make this the sickest website that's ever existed on the world wide web. 
+the priority was making a site that fit all of my demands as a concertgoer, bc i feel like im pretty picky. now that this site is no longer just my own personal log and i am now sharing it with other people, it important for me to take other users' feedback into account too. my instagram is /valeriewango i'm all ears, please do share any and every thought about wripbands with me and i'd love to make this the sickest website that's ever existed on the world wide web. 
+
+p.s. if you click on the star, you can add a picture. only 1 tho. get off your phone at shows.
+
+p.p.s. just wanted an excuse to type pp
