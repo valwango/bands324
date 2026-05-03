@@ -332,7 +332,7 @@ onAuthStateChanged(auth, async (user) => {
 
   } catch (err) {
     console.error("Load failed:", err);
-    alert("Failed to load data");
+    alert("Failed to load data: " + (err && err.message ? err.message : err));
     setPageReady();
   }
 
