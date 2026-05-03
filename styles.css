@@ -1486,13 +1486,16 @@ body {
     margin-top: -12px;
   }
   .star-photo-wrap {
-    width: 5rem;
-    height: 5rem;
+    width: 12rem;
+    height: 12rem;
     margin-top: -12px;
   }
+  .star {
+    font-size: 12rem;
+  }
   .star-photo-img {
-    width: 4rem;
-    height: 4rem;
+    width: 9rem;
+    height: 9rem;
   }
   .header #add-block-btn {
     font-size: 1.84rem;
