@@ -38,7 +38,7 @@ function toggleFestivalMode(fest) {
   festNameInput.style.display = fest ? '' : 'none';
   if (bandInput) bandInput.required = !fest;
   festNameInput.required = fest;
-  submitBtn.textContent = fest ? 'update festival' : 'update band';
+  if (submitBtn) submitBtn.textContent = fest ? 'update festival' : 'update band';
   if (fest && !festNameInput.value && bandInput) festNameInput.value = bandInput.value;
   if (concertBtn) concertBtn.classList.toggle('type-toggle-btn--active', !fest);
   if (festivalBtn) festivalBtn.classList.toggle('type-toggle-btn--active', fest);
@@ -332,7 +332,7 @@ onAuthStateChanged(auth, async (user) => {
 
   } catch (err) {
     console.error("Load failed:", err);
-    alert("Failed to load data: " + (err && err.message ? err.message : err));
+    alert("Failed to load data");
     setPageReady();
   }
 
