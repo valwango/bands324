@@ -1282,10 +1282,10 @@ body {
   background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
-  mix-blend-mode: overlay;
-  opacity: 0.85;
+  mix-blend-mode: hard-light;
+  opacity: 0.5;
   pointer-events: none;
-  z-index: 3;
+  z-index: 1;
 }
 
 .block {
@@ -1582,6 +1582,10 @@ body {
     transform: rotate(180deg);
     color: #000;
     height: 80%;
+  }
+
+  .block-wrinkle {
+    left: 60px;
   }
 
 }
