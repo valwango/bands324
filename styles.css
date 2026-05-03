@@ -1275,13 +1275,17 @@ body {
 
 .block-wrinkle {
   position: absolute;
-  inset: 0;
-  background-size: cover;
+  top: 0;
+  left: 75px;
+  right: 0;
+  height: 100%;
+  background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
-  mix-blend-mode: screen;
+  mix-blend-mode: overlay;
+  opacity: 0.85;
   pointer-events: none;
-  z-index: 1;
+  z-index: 3;
 }
 
 .block {
@@ -1343,7 +1347,7 @@ body {
   z-index: 0;
 }
 
-.block > * {
+.block > *:not(.block-wrinkle) {
   position: relative;
   z-index: 1;
 }

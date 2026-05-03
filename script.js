@@ -261,7 +261,7 @@ function createBlock(row, idx, type) {
   block.appendChild(venueDiv);
 
   if (type === 'past') {
-    const wrinkleNum = (idx % 9) + 1;
+    const wrinkleNum = Math.floor(Math.random() * 9) + 1;
     const wrinkle = document.createElement('div');
     wrinkle.className = 'block-wrinkle';
     wrinkle.style.backgroundImage = `url('assets/wrink${wrinkleNum}.png')`;
@@ -329,7 +329,7 @@ function createFestivalBlock(row, idx, type) {
   block.appendChild(venueDiv);
 
   if (type === 'past') {
-    const wrinkleNum = (idx % 9) + 1;
+    const wrinkleNum = Math.floor(Math.random() * 9) + 1;
     const wrinkle = document.createElement('div');
     wrinkle.className = 'block-wrinkle';
     wrinkle.style.backgroundImage = `url('assets/wrink${wrinkleNum}.png')`;
