@@ -3,7 +3,7 @@ import { auth, db, storage } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc, updateDoc, deleteDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-import { setSelectedDate } from "./pickers.js?v=20260427g";
+import { setSelectedDate } from "./pickers.js?v=20260502s";
 import { goToPage } from "./navigation.js";
 
 // Get show ID and type from URL
