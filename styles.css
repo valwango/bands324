@@ -767,10 +767,13 @@ input[type="date"]::-webkit-datetime-edit-year-field {
 }
 
 .star-photo-img {
-  width: 8rem;
-  height: 8rem;
+  width: 6rem;
+  height: 6rem;
   object-fit: cover;
   display: block;
+  border: 3px solid #fff;
+  box-sizing: border-box;
+  cursor: pointer;
 }
 
 .star-photo-add-btn {
@@ -780,9 +783,8 @@ input[type="date"]::-webkit-datetime-edit-year-field {
   transform: translate(-50%, -50%);
   width: 2rem;
   height: 2rem;
-  border-radius: 50%;
-  background: rgba(0,0,0,0.45);
-  border: 1.5px solid rgba(255,255,255,0.5);
+  background: transparent;
+  border: none;
   color: #fff;
   font-size: 1.3rem;
   line-height: 1;
@@ -795,15 +797,91 @@ input[type="date"]::-webkit-datetime-edit-year-field {
 }
 
 .star-photo-add-btn--has-photo {
-  top: auto;
-  left: auto;
-  bottom: 4px;
-  right: 4px;
-  transform: none;
-  width: 1.4rem;
-  height: 1.4rem;
+  display: none;
+}
+
+.photo-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.photo-popup-backdrop {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  pointer-events: auto;
+}
+.photo-popup-sheet {
+  position: relative;
+  z-index: 1;
+  background: #f5f0e8;
+  width: 360px;
+  height: 420px;
+  padding: 18px 18px 60px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.3);
+  pointer-events: auto;
+  transform: rotate(-1.5deg);
+}
+.photo-popup-photo-box {
+  width: 320px;
+  height: 320px;
+  background: #1a1a1a;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.photo-popup-preview {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photo-popup-actions {
+  display: flex;
+}
+.photo-popup-actions--two {
+  gap: 8px;
+}
+.photo-popup-photo-plus {
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.4);
+  font-size: 4rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  font-family: 'JetBrains Mono', monospace;
+}
+.photo-popup-photo-plus:active {
+  color: rgba(255,255,255,0.7);
+}
+.photo-popup-btn {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: #1a1a1a;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 1rem;
-  background: rgba(0,0,0,0.6);
+  text-align: center;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: background 0.15s;
+}
+.photo-popup-btn:active {
+  background: rgba(0,0,0,0.15);
 }
 
 /* Extra small screen overrides: forcefully shrink day bubble and text */
@@ -1421,8 +1499,8 @@ body {
     margin-top: -12px;
   }
   .star-photo-img {
-    width: 5rem;
-    height: 5rem;
+    width: 4rem;
+    height: 4rem;
   }
   .header #add-block-btn {
     font-size: 1.84rem;

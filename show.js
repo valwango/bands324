@@ -124,25 +124,57 @@ function showPhoto(url) {
   starPhotoBtn.classList.add('star-photo-add-btn--has-photo');
 }
 
-if (starPhotoBtn) {
-  starPhotoBtn.addEventListener('click', () => starPhotoInput && starPhotoInput.click());
+const photoPopup = document.getElementById('photo-popup');
+const photoPopupBackdrop = document.getElementById('photo-popup-backdrop');
+const photoPopupUpload = document.getElementById('photo-popup-upload');
+const photoPopupReplace = document.getElementById('photo-popup-replace');
+const photoPopupSubmit = document.getElementById('photo-popup-submit');
+const photoPopupActionsUpload = document.getElementById('photo-popup-actions-upload');
+const photoPopupActionsReplace = document.getElementById('photo-popup-actions-replace');
+const photoPopupPreview = document.getElementById('photo-popup-preview');
+const photoPopupPlus = document.getElementById('photo-popup-plus');
+
+function openPhotoPopup() { if (photoPopup) photoPopup.style.display = 'flex'; }
+function closePhotoPopup() { if (photoPopup) photoPopup.style.display = 'none'; }
+
+function showPopupPreview(url) {
+  photoPopupPreview.src = url;
+  photoPopupPreview.style.display = 'block';
+  photoPopupPlus.style.display = 'none';
+  photoPopupActionsUpload.style.display = 'none';
+  photoPopupActionsReplace.style.display = 'flex';
 }
+
+if (starPhotoBtn) {
+  starPhotoBtn.addEventListener('click', openPhotoPopup);
+}
+if (starPhotoImg) starPhotoImg.addEventListener('click', openPhotoPopup);
+if (photoPopupBackdrop) photoPopupBackdrop.addEventListener('click', closePhotoPopup);
+if (photoPopupUpload) photoPopupUpload.addEventListener('click', () => { starPhotoInput && starPhotoInput.click(); });
+if (photoPopupPlus) photoPopupPlus.addEventListener('click', () => { starPhotoInput && starPhotoInput.click(); });
+if (photoPopupReplace) photoPopupReplace.addEventListener('click', () => { starPhotoInput && starPhotoInput.click(); });
+if (photoPopupSubmit) photoPopupSubmit.addEventListener('click', () => {
+  if (currentPhotoUrl) {
+    showPhoto(currentPhotoUrl);
+  }
+  closePhotoPopup();
+});
 
 if (starPhotoInput) {
   starPhotoInput.addEventListener('change', async () => {
     const file = starPhotoInput.files[0];
     if (!file) return;
+    const localUrl = URL.createObjectURL(file);
+    showPopupPreview(localUrl);
+    openPhotoPopup();
     const user = auth.currentUser;
     if (!user) return;
-    // Show local preview immediately
-    const localUrl = URL.createObjectURL(file);
-    showPhoto(localUrl);
     try {
       const storageRef = ref(storage, `users/${user.uid}/shows/${showId}/photo`);
       await uploadBytes(storageRef, file);
       const url = await getDownloadURL(storageRef);
-      showPhoto(url);
-      // Persist to Firestore
+      currentPhotoUrl = url;
+      showPopupPreview(url);
       await updateDoc(docRef, { photoUrl: url });
     } catch (err) {
       console.error('Photo upload failed:', err);

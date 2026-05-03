@@ -22,11 +22,28 @@
   </header>
 
   <main style="padding-bottom: 72px;">
-    <div class="star-photo-wrap" id="star-photo-wrap">
+    <div class="star-photo-wrap" id="star-photo-wrap" style="margin-top:20px;">
       <div class="star" id="star-display">★</div>
       <button type="button" class="star-photo-add-btn" id="star-photo-btn" title="add photo">+</button>
       <img class="star-photo-img" id="star-photo-img" style="display:none;" alt="show photo" />
       <input type="file" id="star-photo-input" accept="image/*" capture="environment" style="display:none;" />
+    </div>
+
+    <div id="photo-popup" class="photo-popup" style="display:none;">
+      <div class="photo-popup-backdrop" id="photo-popup-backdrop"></div>
+      <div class="photo-popup-sheet">
+        <div class="photo-popup-photo-box">
+          <button type="button" class="photo-popup-photo-plus" id="photo-popup-plus">+</button>
+          <img class="photo-popup-preview" id="photo-popup-preview" style="display:none;" alt="" />
+        </div>
+        <div class="photo-popup-actions" id="photo-popup-actions-upload">
+          <button type="button" class="photo-popup-btn" id="photo-popup-upload">upload photo</button>
+        </div>
+        <div class="photo-popup-actions photo-popup-actions--two" id="photo-popup-actions-replace" style="display:none;">
+          <button type="button" class="photo-popup-btn" id="photo-popup-replace">replace</button>
+          <button type="button" class="photo-popup-btn photo-popup-btn--submit" id="photo-popup-submit">keep</button>
+        </div>
+      </div>
     </div>
 
     <form id="add-show-form">

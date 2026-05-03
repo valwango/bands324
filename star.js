@@ -22,16 +22,50 @@ const starPhotoImg = document.getElementById('star-photo-img');
 const starDisplay = document.getElementById('star-display');
 let pendingPhotoFile = null;
 
-if (starPhotoBtn) starPhotoBtn.addEventListener('click', () => starPhotoInput && starPhotoInput.click());
+const photoPopup = document.getElementById('photo-popup');
+const photoPopupBackdrop = document.getElementById('photo-popup-backdrop');
+const photoPopupUpload = document.getElementById('photo-popup-upload');
+const photoPopupReplace = document.getElementById('photo-popup-replace');
+const photoPopupSubmit = document.getElementById('photo-popup-submit');
+const photoPopupActionsUpload = document.getElementById('photo-popup-actions-upload');
+const photoPopupActionsReplace = document.getElementById('photo-popup-actions-replace');
+const photoPopupPreview = document.getElementById('photo-popup-preview');
+const photoPopupPlus = document.getElementById('photo-popup-plus');
+
+function openPhotoPopup() { if (photoPopup) photoPopup.style.display = 'flex'; }
+function closePhotoPopup() { if (photoPopup) photoPopup.style.display = 'none'; }
+
+function showPopupPreview(url) {
+  photoPopupPreview.src = url;
+  photoPopupPreview.style.display = 'block';
+  photoPopupPlus.style.display = 'none';
+  photoPopupActionsUpload.style.display = 'none';
+  photoPopupActionsReplace.style.display = 'flex';
+}
+
+if (starPhotoBtn) starPhotoBtn.addEventListener('click', openPhotoPopup);
+if (starPhotoImg) starPhotoImg.addEventListener('click', openPhotoPopup);
+if (photoPopupBackdrop) photoPopupBackdrop.addEventListener('click', closePhotoPopup);
+if (photoPopupUpload) photoPopupUpload.addEventListener('click', () => { starPhotoInput && starPhotoInput.click(); });
+if (photoPopupPlus) photoPopupPlus.addEventListener('click', () => { starPhotoInput && starPhotoInput.click(); });
+if (photoPopupReplace) photoPopupReplace.addEventListener('click', () => { starPhotoInput && starPhotoInput.click(); });
+if (photoPopupSubmit) photoPopupSubmit.addEventListener('click', () => {
+  if (pendingPhotoFile) {
+    starPhotoImg.src = photoPopupPreview.src;
+    starPhotoImg.style.display = 'block';
+    starDisplay.style.display = 'none';
+    starPhotoBtn.classList.add('star-photo-add-btn--has-photo');
+  }
+  closePhotoPopup();
+});
 if (starPhotoInput) {
   starPhotoInput.addEventListener('change', () => {
     const file = starPhotoInput.files[0];
     if (!file) return;
     pendingPhotoFile = file;
-    starPhotoImg.src = URL.createObjectURL(file);
-    starPhotoImg.style.display = 'block';
-    starDisplay.style.display = 'none';
-    starPhotoBtn.classList.add('star-photo-add-btn--has-photo');
+    const url = URL.createObjectURL(file);
+    showPopupPreview(url);
+    openPhotoPopup();
   });
 }
 
