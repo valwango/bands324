@@ -32,7 +32,10 @@ const bgInput = document.getElementById('bgImage');
         bandColorRow.querySelectorAll('.color-circle').forEach(c => c.classList.remove('selected'));
         circle.classList.add('selected');
         selectedBandBg = filename;
-        if(bgInput) bgInput.value = filename;
+        if(bgInput) {
+          bgInput.value = filename;
+          bgInput.dispatchEvent(new Event('change', { bubbles: true }));
+        }
       });
       if (filename === selectedBandBg) circle.classList.add('selected');
       bandColorRow.appendChild(circle);
@@ -60,7 +63,10 @@ const bgInput = document.getElementById('bgImage');
         festivalColorRow.querySelectorAll('.color-circle').forEach(c => c.classList.remove('selected'));
         circle.classList.add('selected');
         selectedFestivalBg = filename;
-        if(bgInput) bgInput.value = filename;
+        if(bgInput) {
+          bgInput.value = filename;
+          bgInput.dispatchEvent(new Event('change', { bubbles: true }));
+        }
       });
       if (filename === selectedFestivalBg) circle.classList.add('selected');
       festivalColorRow.appendChild(circle);
@@ -277,7 +283,10 @@ const bgInput = document.getElementById('bgImage');
         const selectDay = e => {
           e.stopPropagation();
           selectedDate = new Date(el.getAttribute('data-date'));
-          if(customDateInput) customDateInput.value = el.getAttribute('data-date');
+          if(customDateInput) {
+            customDateInput.value = el.getAttribute('data-date');
+            customDateInput.dispatchEvent(new Event('change', { bubbles: true }));
+          }
           datepicker.style.display='none';
         };
         el.addEventListener('click', selectDay);

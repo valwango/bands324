@@ -25,6 +25,9 @@ const showContentEl = document.getElementById("show-content");
 const artistFields = document.getElementById("artist-fields");
 
 let isFestival = false;
+let savedAsFestival = isLoadingFestival;
+let showRef = null;
+let festivalRef = null;
 const concertBtn = document.getElementById('is-concert');
 const festivalBtn = document.getElementById('is-festival');
 
@@ -52,8 +55,8 @@ function toggleFestivalMode(fest) {
   });
 }
 
-if (concertBtn) concertBtn.addEventListener('click', () => toggleFestivalMode(false));
-if (festivalBtn) festivalBtn.addEventListener('click', () => toggleFestivalMode(true));
+if (concertBtn) concertBtn.addEventListener('click', () => { toggleFestivalMode(false); scheduleSave(); });
+if (festivalBtn) festivalBtn.addEventListener('click', () => { toggleFestivalMode(true); scheduleSave(); });
 
 function makeAddRowBtn(afterWrapper) {
   const btn = document.createElement('button');
@@ -165,6 +168,7 @@ if (starPhotoInput) {
     const file = starPhotoInput.files[0];
     if (!file) return;
     const localUrl = URL.createObjectURL(file);
+    currentPhotoUrl = localUrl;
     showPopupPreview(localUrl);
     openPhotoPopup();
     const user = auth.currentUser;
@@ -193,6 +197,62 @@ if (diaryInput) {
   diaryInput.addEventListener("input", autoResizeDiary);
 }
 
+// -------------------
+// Auto-save
+// -------------------
+let saveTimer = null;
+
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveData, 700);
+}
+
+async function saveData() {
+  if (!docRef) return;
+  const user = auth.currentUser;
+  if (!user) return;
+  try {
+    const venue = venueInput.value.trim();
+    const date = dateInput.value.trim();
+    const diary = diaryInput.value.trim();
+    const bgImage = bgInput.value || 'blackband.png';
+
+    if (isFestival) {
+      const festivalName = document.getElementById('festival-name').value.trim();
+      const artistArray = [...artistFields.querySelectorAll('.artist-input')]
+        .map(i => i.value.trim()).filter(Boolean);
+      if (!festivalName) return;
+      const festData = { name: festivalName, venue, date, diary, bgImage, artists: artistArray };
+      if (savedAsFestival) {
+        await updateDoc(festivalRef, festData);
+      } else {
+        const newRef = await addDoc(collection(db, 'users', user.uid, 'festivals'), { ...festData, createdAt: new Date() });
+        await deleteDoc(showRef);
+        docRef = newRef;
+        festivalRef = newRef;
+        savedAsFestival = true;
+        history.replaceState(null, '', `?id=${newRef.id}&type=festival`);
+      }
+    } else {
+      const guests = [...artistFields.querySelectorAll('.artist-input-wrap input')]
+        .slice(1).map(i => i.value.trim()).filter(Boolean);
+      const showData = { band: bandInput.value.trim(), venue, date, diary, bgImage, guests };
+      if (!savedAsFestival) {
+        await updateDoc(showRef, showData);
+      } else {
+        const newRef = await addDoc(collection(db, 'users', user.uid, 'shows'), { ...showData, createdAt: new Date() });
+        await deleteDoc(festivalRef);
+        docRef = newRef;
+        showRef = newRef;
+        savedAsFestival = false;
+        history.replaceState(null, '', `?id=${newRef.id}`);
+      }
+    }
+  } catch (err) {
+    console.error('Auto-save failed:', err);
+  }
+}
+
 // Wait for user auth
 onAuthStateChanged(auth, async (user) => {
   if (!user || !showId) {
@@ -200,8 +260,10 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  const showRef = doc(db, "users", user.uid, "shows", showId);
-  const festivalRef = doc(db, "users", user.uid, "festivals", showId);
+  const showRef_inner = doc(db, "users", user.uid, "shows", showId);
+  const festivalRef_inner = doc(db, "users", user.uid, "festivals", showId);
+  showRef = showRef_inner;
+  festivalRef = festivalRef_inner;
   docRef = isLoadingFestival ? festivalRef : showRef;
 
   // -------------------
@@ -258,6 +320,16 @@ onAuthStateChanged(auth, async (user) => {
     autoResizeDiary();
     if (data.photoUrl) showPhoto(data.photoUrl);
 
+    // Wire auto-save listeners
+    [bandInput, venueInput, diaryInput].forEach(el => {
+      if (el) el.addEventListener('input', scheduleSave);
+    });
+    const festNameInput = document.getElementById('festival-name');
+    if (festNameInput) festNameInput.addEventListener('input', scheduleSave);
+    artistFields.addEventListener('input', scheduleSave);
+    if (bgInput) bgInput.addEventListener('change', scheduleSave);
+    if (dateInput) dateInput.addEventListener('change', scheduleSave);
+
   } catch (err) {
     console.error("Load failed:", err);
     alert("Failed to load data");
@@ -265,51 +337,9 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   // -------------------
-  // UPDATE DATA
+  // PREVENT DEFAULT SUBMIT
   // -------------------
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    try {
-      const venue = venueInput.value.trim();
-      const date = dateInput.value.trim();
-      const diary = diaryInput.value.trim();
-      const bgImage = bgInput.value || 'blackband.png';
-
-      if (isFestival) {
-        const festivalName = document.getElementById('festival-name').value.trim();
-        const artistArray = [...artistFields.querySelectorAll('.artist-input')]
-          .map(i => i.value.trim()).filter(Boolean);
-        if (!festivalName) return;
-        const festData = { name: festivalName, venue, date, diary, bgImage, artists: artistArray };
-        if (isLoadingFestival) {
-          // update existing festival
-          await updateDoc(festivalRef, festData);
-        } else {
-          // convert show → festival
-          await addDoc(collection(db, 'users', user.uid, 'festivals'), { ...festData, createdAt: new Date() });
-          await deleteDoc(showRef);
-        }
-      } else {
-        const guests = [...artistFields.querySelectorAll('.artist-input-wrap input')]
-          .slice(1).map(i => i.value.trim()).filter(Boolean);
-        const showData = { band: bandInput.value.trim(), venue, date, diary, bgImage, guests };
-        if (isLoadingFestival) {
-          // convert festival → show
-          await addDoc(collection(db, 'users', user.uid, 'shows'), { ...showData, createdAt: new Date() });
-          await deleteDoc(festivalRef);
-        } else {
-          // update existing show
-          await updateDoc(showRef, showData);
-        }
-      }
-
-      goToPage("index.html");
-    } catch (err) {
-      console.error("Update failed:", err);
-      alert("Failed to update");
-    }
-  });
+  form.addEventListener("submit", e => e.preventDefault());
 
   // -------------------
   // DELETE SHOW
