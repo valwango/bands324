@@ -39,16 +39,21 @@ async function loadGlobalFeed() {
 
   async function getUsername(uid) {
     if (userCache.has(uid)) return userCache.get(uid);
-    const userDoc = await getDoc(doc(db, 'users', uid));
-    const name = userDoc.exists() && userDoc.data().username ? userDoc.data().username : 'someone';
-    userCache.set(uid, name);
-    return name;
+    try {
+      const userDoc = await getDoc(doc(db, 'users', uid));
+      const name = userDoc.exists() && userDoc.data().username ? userDoc.data().username : 'someone';
+      userCache.set(uid, name);
+      return name;
+    } catch {
+      userCache.set(uid, 'someone');
+      return 'someone';
+    }
   }
 
   const now = new Date();
   now.setHours(0, 0, 0, 0);
 
-  const showsSnap = await getDocs(collectionGroup(db, 'shows'));
+  const showsSnap = await getDocs(collectionGroup(db, 'shows')).catch(() => ({ docs: [] }));
   for (const d of showsSnap.docs) {
     const { band, date } = d.data();
     if (!band || !date) continue;
@@ -57,7 +62,7 @@ async function loadGlobalFeed() {
     entries.push({ uid: d.ref.parent.parent.id, label: band, date: parsed, type: 'show' });
   }
 
-  const festsSnap = await getDocs(collectionGroup(db, 'festivals'));
+  const festsSnap = await getDocs(collectionGroup(db, 'festivals')).catch(() => ({ docs: [] }));
   for (const d of festsSnap.docs) {
     const { name, date } = d.data();
     if (!name || !date) continue;
