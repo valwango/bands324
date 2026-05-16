@@ -422,8 +422,14 @@ function listenToUserEvents(user) {
         stickyDiv.innerHTML = `<span class="past-date-label">${mm}/${dd}/${yy}</span>`;
         stickyDiv.style.backgroundImage = "url('assets/sticky.png')";
         placeholder.appendChild(stickyDiv);
-        placeholder.innerHTML += '<div class="block-placeholder-label">ADD YOUR FIRST BAND</div>';
-        upcomingBlocks.appendChild(placeholder);
+        const placeholderWrapper = document.createElement('div');
+        placeholderWrapper.className = 'block-placeholder-wrapper';
+        placeholderWrapper.appendChild(placeholder);
+        const label = document.createElement('div');
+        label.className = 'block-placeholder-label';
+        label.textContent = 'ADD YOUR FIRST BAND';
+        placeholderWrapper.appendChild(label);
+        upcomingBlocks.appendChild(placeholderWrapper);
         if (upcomingSection) upcomingSection.classList.remove('blocks-section--hidden');
         if (!hasRenderedOnce) { hasRenderedOnce = true; window.clearTimeout(loaderTimeout); hideLoader(); }
         return;

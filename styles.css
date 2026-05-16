@@ -1428,11 +1428,19 @@ body {
   cursor: pointer;
 }
 
+.block-placeholder-wrapper {
+  position: relative;
+}
+
 .block-placeholder-label {
   position: absolute;
+  top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.96rem;
   font-weight: 700;
