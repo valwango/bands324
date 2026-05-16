@@ -1,12 +1,16 @@
 // global.js — loads all bands from all users and renders a scrolling ticker
-import { db } from "./firebase-config.js";
-import { collection, getDocs, collectionGroup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { auth, db } from "./firebase-config.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { collectionGroup, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const section = document.getElementById('global-section');
 const ticker = document.getElementById('global-ticker');
 if (!section || !ticker) throw new Error('global section missing');
 
-async function loadGlobalBands() {
+onAuthStateChanged(auth, (user) => {
+  if (!user) return;
+  loadGlobalBands().catch(err => console.error('global bands error:', err));
+});
   const names = new Set();
 
   // Read all shows across all users
@@ -51,4 +55,4 @@ async function loadGlobalBands() {
   section.style.display = '';
 }
 
-loadGlobalBands().catch(err => console.error('global bands error:', err));
+async function loadGlobalBands() {
