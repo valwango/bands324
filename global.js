@@ -60,6 +60,7 @@ async function loadGlobalFeed() {
   for (const d of showsSnap.docs) {
     const data = d.data();
     if (!data.band || !data.date) continue;
+    if (data.privacy && data.privacy !== 'global') continue;
     const parsed = parseDateStr(data.date);
     if (!parsed || parsed >= now) continue;
     entries.push({
@@ -77,6 +78,7 @@ async function loadGlobalFeed() {
   for (const d of festsSnap.docs) {
     const data = d.data();
     if (!data.name || !data.date) continue;
+    if (data.privacy && data.privacy !== 'global') continue;
     const parsed = parseDateStr(data.date);
     if (!parsed || parsed >= now) continue;
     entries.push({

@@ -1018,6 +1018,35 @@ input[type="date"]::-webkit-datetime-edit-year-field {
   margin-bottom: 10px;
 }
 
+.privacy-toggle-row {
+  display: flex;
+  gap: 0;
+  margin-bottom: 10px;
+}
+
+.privacy-btn {
+  flex: 1;
+  padding: 7px 4px;
+  font-size: 0.78rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: inherit;
+  background: rgba(255,255,255,0.08);
+  border: none;
+  outline: none;
+  color: inherit;
+  opacity: 0.5;
+  cursor: pointer;
+  border-radius: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.privacy-btn--active {
+  background: rgba(255,255,255,0.18);
+  opacity: 1;
+}
+
 .type-toggle-btn {
   flex: 1;
   padding: 8px;
@@ -1851,6 +1880,7 @@ body {
   text-transform: lowercase;
   margin-bottom: 14px;
   padding: 0 12px;
+  text-align: center;
 }
 
 .global-ticker-wrap { display: none; }

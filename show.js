@@ -28,6 +28,23 @@ let isFestival = false;
 let savedAsFestival = isLoadingFestival;
 let showRef = null;
 let festivalRef = null;
+let currentPrivacy = 'global';
+
+const privacyGlobalBtn = document.getElementById('privacy-global');
+const privacyFriendsBtn = document.getElementById('privacy-friends');
+const privacySecretBtn = document.getElementById('privacy-secret');
+const privacyBtns = [privacyGlobalBtn, privacyFriendsBtn, privacySecretBtn];
+
+function setPrivacy(val) {
+  currentPrivacy = val;
+  privacyBtns.forEach(btn => {
+    if (btn) btn.classList.toggle('privacy-btn--active', btn.id === 'privacy-' + val);
+  });
+}
+
+if (privacyGlobalBtn) privacyGlobalBtn.addEventListener('click', () => { setPrivacy('global'); scheduleSave(); });
+if (privacyFriendsBtn) privacyFriendsBtn.addEventListener('click', () => { setPrivacy('friends'); scheduleSave(); });
+if (privacySecretBtn) privacySecretBtn.addEventListener('click', () => { setPrivacy('secret'); scheduleSave(); });
 const concertBtn = document.getElementById('is-concert');
 const festivalBtn = document.getElementById('is-festival');
 
@@ -222,7 +239,7 @@ async function saveData() {
       const artistArray = [...artistFields.querySelectorAll('.artist-input')]
         .map(i => i.value.trim()).filter(Boolean);
       if (!festivalName) return;
-      const festData = { name: festivalName, venue, date, diary, bgImage, artists: artistArray };
+      const festData = { name: festivalName, venue, date, diary, bgImage, artists: artistArray, privacy: currentPrivacy };
       if (savedAsFestival) {
         await updateDoc(festivalRef, festData);
       } else {
@@ -236,7 +253,7 @@ async function saveData() {
     } else {
       const guests = [...artistFields.querySelectorAll('.artist-input-wrap input')]
         .slice(1).map(i => i.value.trim()).filter(Boolean);
-      const showData = { band: bandInput.value.trim(), venue, date, diary, bgImage, guests };
+      const showData = { band: bandInput.value.trim(), venue, date, diary, bgImage, guests, privacy: currentPrivacy };
       if (!savedAsFestival) {
         await updateDoc(showRef, showData);
       } else {
@@ -319,6 +336,7 @@ onAuthStateChanged(auth, async (user) => {
     setPageReady();
     autoResizeDiary();
     if (data.photoUrl) showPhoto(data.photoUrl);
+    setPrivacy(data.privacy || 'global');
 
     // Wire auto-save listeners
     [bandInput, venueInput, diaryInput].forEach(el => {
