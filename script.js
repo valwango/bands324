@@ -404,6 +404,9 @@ function listenToUserEvents(user) {
       upcomingBlocks.innerHTML = '';
       pastBlocks.innerHTML = '';
 
+      const upcomingSection = document.getElementById('upcoming-section');
+      const pastSection = document.getElementById('past-section');
+
       // Placeholder for brand-new users with no bands
       if (allEvents.length === 0) {
         const placeholder = document.createElement('a');
@@ -418,8 +421,6 @@ function listenToUserEvents(user) {
       }
 
       // Hide sections while refitting to prevent visible bouncing
-      const upcomingSection = document.getElementById('upcoming-section');
-      const pastSection = document.getElementById('past-section');
       if (upcomingSection) upcomingSection.classList.add('blocks-section--hidden');
       if (pastSection) pastSection.classList.add('blocks-section--hidden');
 
