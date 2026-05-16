@@ -1,7 +1,7 @@
 // profile.js
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged, updateProfile, updateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { doc, getDoc, setDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { doc, getDoc, setDoc, deleteDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { goToPage } from "./navigation.js";
 
 // Elements
@@ -26,9 +26,10 @@ onAuthStateChanged(auth, async (user) => {
   const userDocRef = doc(db, "users", user.uid);
   const userDoc = await getDoc(userDocRef);
 
-  // Set initial username
-  const username = userDoc.exists() && userDoc.data().username ? userDoc.data().username : (user.displayName || '');
-  usernameInput.value = username;
+  // Set initial username (userId and username are the same field)
+  const storedUserId = userDoc.exists() && userDoc.data().userId ? userDoc.data().userId : '';
+  const storedUsername = userDoc.exists() && userDoc.data().username ? userDoc.data().username : (user.displayName || '');
+  usernameInput.value = storedUserId || storedUsername;
   emailInput.value = user.email;
 
   // -------------------
@@ -159,26 +160,39 @@ onAuthStateChanged(auth, async (user) => {
   // Save profile changes
   // -------------------
   saveBtn.onclick = async () => {
-    const newUsername = usernameInput.value.trim();
+    const newUser = usernameInput.value.trim().toLowerCase().replace(/[^a-z0-9_\-]/g, '');
     const newEmail = emailInput.value.trim();
-    if (!newUsername || !newEmail) return;
+    if (!newUser) { alert('username is required'); return; }
+    if (newUser.length < 2) { alert('username must be at least 2 characters'); return; }
+    if (!newEmail) return;
 
     try {
-      // Update Firestore
-      await setDoc(userDocRef, { username: newUsername }, { merge: true });
+      const oldUserId = myUserId;
+      if (newUser !== oldUserId) {
+        const existingDoc = await getDoc(doc(db, "userIds", newUser));
+        if (existingDoc.exists() && existingDoc.data().uid !== user.uid) {
+          saveBtn.textContent = 'username taken';
+          setTimeout(() => { saveBtn.textContent = 'save changes'; }, 2000);
+          return;
+        }
+        if (oldUserId) await deleteDoc(doc(db, "userIds", oldUserId));
+        await setDoc(doc(db, "userIds", newUser), { uid: user.uid });
+      }
 
-      // Update Firebase Auth profile
-      await updateProfile(user, { displayName: newUsername });
-
-      // Update email
+      await setDoc(userDocRef, { username: newUser, userId: newUser }, { merge: true });
+      await updateProfile(user, { displayName: newUser });
       if (newEmail !== user.email) {
         await updateEmail(user, newEmail);
       }
 
+      myUserId = newUser;
+      usernameInput.value = newUser;
+      if (userIdDisplay) userIdDisplay.textContent = newUser;
+
       saveBtn.textContent = 'saved!';
       setTimeout(() => { saveBtn.textContent = 'save changes'; }, 1200);
     } catch (err) {
-      alert('Error updating profile: ' + err.message);
+      alert('Error saving: ' + err.message);
       console.error(err);
     }
   };
@@ -217,8 +231,9 @@ onAuthStateChanged(auth, async (user) => {
   let myUserId = userDoc.exists() ? userDoc.data().userId : null;
   if (!myUserId) {
     myUserId = Math.random().toString(36).slice(2, 8);
-    await setDoc(userDocRef, { userId: myUserId }, { merge: true });
+    await setDoc(userDocRef, { userId: myUserId, username: myUserId }, { merge: true });
     await setDoc(doc(db, "userIds", myUserId), { uid: user.uid });
+    usernameInput.value = myUserId;
   }
   const userIdDisplay = document.getElementById('my-user-id');
   if (userIdDisplay) userIdDisplay.textContent = myUserId;
