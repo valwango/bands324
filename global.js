@@ -1,60 +1,97 @@
-// global.js — loads all bands from all users and renders a scrolling ticker
+// global.js — global activity feed
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { collectionGroup, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collectionGroup, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const section = document.getElementById('global-section');
-const ticker = document.getElementById('global-ticker');
-if (!section || !ticker) throw new Error('global section missing');
+const feed = document.getElementById('global-feed');
+if (!section || !feed) throw new Error('global section missing');
 
-async function loadGlobalBands() {
-  const names = new Set();
+function parseDateStr(dateStr) {
+  if (!dateStr) return null;
+  const parts = dateStr.split('/');
+  let mm = parseInt(parts[0], 10), dd = parseInt(parts[1], 10), yy = parseInt(parts[2], 10);
+  if (yy < 100) yy += 2000;
+  return new Date(yy, mm - 1, dd);
+}
 
-  // Read all shows across all users
-  const showsSnap = await getDocs(collectionGroup(db, "shows"));
-  showsSnap.forEach(d => {
-    const { band, guests } = d.data();
-    if (band && band.trim()) names.add(band.trim());
-    if (Array.isArray(guests)) guests.forEach(g => { if (g && g.trim()) names.add(g.trim()); });
-  });
+function relativeDate(date) {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const diff = Math.round((now - date) / (1000 * 60 * 60 * 24));
+  if (diff === 0) return 'today';
+  if (diff === 1) return 'yesterday';
+  if (diff < 7) {
+    const days = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+    return 'on ' + days[date.getDay()];
+  }
+  if (diff < 14) return 'last week';
+  if (diff < 21) return '2 weeks ago';
+  if (diff < 28) return '3 weeks ago';
+  if (diff < 60) return 'last month';
+  const months = ['january','february','march','april','may','june','july','august','september','october','november','december'];
+  return 'in ' + months[date.getMonth()] + (date.getFullYear() !== now.getFullYear() ? ' ' + date.getFullYear() : '');
+}
 
-  // Read all festivals across all users
-  const festsSnap = await getDocs(collectionGroup(db, "festivals"));
-  festsSnap.forEach(d => {
-    const { name, artists } = d.data();
-    if (name && name.trim()) names.add(name.trim());
-    if (Array.isArray(artists)) artists.forEach(a => { if (a && a.trim()) names.add(a.trim()); });
-  });
+async function loadGlobalFeed() {
+  const entries = [];
+  const userCache = new Map();
 
-  if (names.size === 0) return;
+  async function getUsername(uid) {
+    if (userCache.has(uid)) return userCache.get(uid);
+    const userDoc = await getDoc(doc(db, 'users', uid));
+    const name = userDoc.exists() && userDoc.data().username ? userDoc.data().username : 'someone';
+    userCache.set(uid, name);
+    return name;
+  }
 
-  // Sort alphabetically
-  const sorted = [...names].sort((a, b) =>
-    a.replace(/^the\s+/i, '').localeCompare(b.replace(/^the\s+/i, ''))
-  );
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
 
-  // Build ticker: duplicate list for seamless loop
-  const makeItems = () => sorted.map(name => {
-    const span = document.createElement('span');
-    span.className = 'global-ticker-item';
-    span.textContent = name;
-    return span;
-  });
+  const showsSnap = await getDocs(collectionGroup(db, 'shows'));
+  for (const d of showsSnap.docs) {
+    const { band, date } = d.data();
+    if (!band || !date) continue;
+    const parsed = parseDateStr(date);
+    if (!parsed || parsed >= now) continue;
+    entries.push({ uid: d.ref.parent.parent.id, label: band, date: parsed, type: 'show' });
+  }
 
-  makeItems().forEach(el => ticker.appendChild(el));
-  makeItems().forEach(el => ticker.appendChild(el));
+  const festsSnap = await getDocs(collectionGroup(db, 'festivals'));
+  for (const d of festsSnap.docs) {
+    const { name, date } = d.data();
+    if (!name || !date) continue;
+    const parsed = parseDateStr(date);
+    if (!parsed || parsed >= now) continue;
+    entries.push({ uid: d.ref.parent.parent.id, label: name, date: parsed, type: 'festival' });
+  }
 
-  // Adjust speed based on content width
-  requestAnimationFrame(() => {
-    const totalWidth = ticker.scrollWidth / 2;
-    const speed = Math.max(20, totalWidth / 80);
-    ticker.style.animationDuration = `${speed}s`;
-  });
+  if (entries.length === 0) return;
+
+  entries.sort((a, b) => b.date - a.date);
+
+  // Prefetch all usernames
+  await Promise.all([...new Set(entries.map(e => e.uid))].map(uid => getUsername(uid)));
+
+  feed.innerHTML = '';
+  for (const entry of entries.slice(0, 100)) {
+    const username = userCache.get(entry.uid) || 'someone';
+    const verb = entry.type === 'festival' ? 'went to' : 'saw';
+    const row = document.createElement('div');
+    row.className = 'global-feed-row';
+    row.innerHTML =
+      `<span class="global-feed-user">${username}</span>` +
+      ` ${verb} ` +
+      `<span class="global-feed-artist">${entry.label}</span>` +
+      ` <span class="global-feed-time">${relativeDate(entry.date)}</span>`;
+    feed.appendChild(row);
+  }
 
   section.style.display = '';
 }
 
 onAuthStateChanged(auth, (user) => {
   if (!user) return;
-  loadGlobalBands().catch(err => console.error('global bands error:', err));
+  loadGlobalFeed().catch(err => console.error('global feed error:', err));
 });
+

@@ -1855,40 +1855,37 @@ body {
 }
 
 .global-ticker-wrap {
-  overflow: hidden;
-  width: 100%;
-  mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+  display: none;
 }
 
-.global-ticker {
-  display: flex;
-  gap: 0;
-  white-space: nowrap;
-  animation: ticker-scroll 40s linear infinite;
-  width: max-content;
+.global-feed {
+  padding: 0 12px;
 }
 
-.global-ticker:hover {
-  animation-play-state: paused;
-}
-
-.global-ticker-item {
+.global-feed-row {
   font-family: "JetBrains Mono", monospace;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: 0.8rem;
   color: var(--text);
-  opacity: 0.55;
-  padding: 0 18px;
-  flex-shrink: 0;
+  opacity: 0.65;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  line-height: 1.4;
 }
 
-.global-ticker-item::after {
-  content: "·";
-  margin-left: 18px;
-  opacity: 0.3;
+.global-feed-user {
+  font-weight: 700;
+  opacity: 1;
+}
+
+.global-feed-artist {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.global-feed-time {
+  opacity: 0.45;
+  font-size: 0.72rem;
 }
 
 @keyframes ticker-scroll {
