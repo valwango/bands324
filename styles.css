@@ -62,11 +62,13 @@ body {
 .login-input-wrap {
   position: relative;
   width: 100%;
+  margin-bottom: 12px;
 }
 
 .login-input-wrap .login-input {
   width: 100%;
   padding-right: 64px;
+  margin-bottom: 0;
 }
 
 .login-input-hint {
