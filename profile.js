@@ -274,20 +274,23 @@ onAuthStateChanged(auth, async (user) => {
   };
 
   // -------------------
-  // User ID (provision if missing or not 6-digit numeric)
+  // User ID (provision if missing or not 6-digit numeric; once set, never changes)
   // -------------------
-  let myUserId = userDoc.exists() ? userDoc.data().userId : null;
-  if (!myUserId || !/^\d{6}$/.test(myUserId)) {
+  const myUserId = await runTransaction(db, async (transaction) => {
+    const freshSnap = await transaction.get(userDocRef);
+    const existingId = freshSnap.exists() ? freshSnap.data().userId : null;
+    // Already has a valid ID — return it, no writes needed
+    if (existingId && /^\d{6}$/.test(existingId)) return existingId;
+    // Provision a new sequential ID atomically
     const counterRef = doc(db, "counters", "userCount");
-    myUserId = await runTransaction(db, async (transaction) => {
-      const counterDoc = await transaction.get(counterRef);
-      const nextCount = (counterDoc.exists() ? counterDoc.data().count : 0) + 1;
-      transaction.set(counterRef, { count: nextCount });
-      return String(nextCount).padStart(6, '0');
-    });
-    await setDoc(userDocRef, { userId: myUserId }, { merge: true });
-    await setDoc(doc(db, "userIds", myUserId), { uid: user.uid });
-  }
+    const counterDoc = await transaction.get(counterRef);
+    const nextCount = (counterDoc.exists() ? counterDoc.data().count : 0) + 1;
+    const newId = String(nextCount).padStart(6, '0');
+    transaction.set(counterRef, { count: nextCount });
+    transaction.set(userDocRef, { userId: newId }, { merge: true });
+    transaction.set(doc(db, "userIds", newId), { uid: user.uid });
+    return newId;
+  });
   const userIdDisplay = document.getElementById('my-user-id');
   if (userIdDisplay) userIdDisplay.textContent = myUserId;
 

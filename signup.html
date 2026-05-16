@@ -78,14 +78,16 @@
       const uid = cred.user.uid;
       // Assign sequential 6-digit user ID
       const counterRef = doc(db, "counters", "userCount");
+      const userRef = doc(db, "users", uid);
       const userId = await runTransaction(db, async (transaction) => {
         const counterDoc = await transaction.get(counterRef);
         const nextCount = (counterDoc.exists() ? counterDoc.data().count : 0) + 1;
+        const newId = String(nextCount).padStart(6, '0');
         transaction.set(counterRef, { count: nextCount });
-        return String(nextCount).padStart(6, '0');
+        transaction.set(userRef, { userId: newId }, { merge: true });
+        transaction.set(doc(db, "userIds", newId), { uid });
+        return newId;
       });
-      await setDoc(doc(db, "users", uid), { userId }, { merge: true });
-      await setDoc(doc(db, "userIds", userId), { uid });
       window.location.href = "./index.html";
     } catch (error) {
       errorDiv.textContent = error.message;
