@@ -1836,11 +1836,10 @@ body {
 }
 
 /* =====================
-   Global bands ticker
+   FOMO Feed
    ===================== */
 .global-section {
-  padding: 24px 0 32px;
-  overflow: hidden;
+  padding: 24px 0 48px;
 }
 
 .global-header {
@@ -1854,38 +1853,83 @@ body {
   padding: 0 12px;
 }
 
-.global-ticker-wrap {
-  display: none;
-}
+.global-ticker-wrap { display: none; }
 
 .global-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   padding: 0 12px;
 }
 
-.global-feed-row {
+.fomo-card {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 4px;
+  overflow: hidden;
   font-family: "JetBrains Mono", monospace;
-  font-size: 0.8rem;
-  color: var(--text);
-  opacity: 0.65;
-  padding: 7px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  line-height: 1.4;
+  background: rgba(255,255,255,0.03);
 }
 
-.global-feed-user {
+.fomo-card-text {
+  flex: 1 1 0;
+  padding: 12px 14px;
+  min-width: 0;
+}
+
+.fomo-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.fomo-card-time {
+  font-size: 0.68rem;
   font-weight: 700;
-  opacity: 1;
+  letter-spacing: 0.08em;
+  color: var(--muted);
 }
 
-.global-feed-artist {
+.fomo-card-user {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.fomo-card-action {
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+.fomo-artist {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
-.global-feed-time {
-  opacity: 0.45;
+.fomo-venue {
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.fomo-diary {
   font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.fomo-card-photo {
+  width: 110px;
+  flex-shrink: 0;
+  background-size: cover;
+  background-position: center;
 }
 
 @keyframes ticker-scroll {

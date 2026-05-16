@@ -1,4 +1,4 @@
-// global.js — global activity feed
+// global.js — FOMO Feed
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collectionGroup, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -19,18 +19,18 @@ function relativeDate(date) {
   const now = new Date();
   now.setHours(0, 0, 0, 0);
   const diff = Math.round((now - date) / (1000 * 60 * 60 * 24));
-  if (diff === 0) return 'today';
-  if (diff === 1) return 'yesterday';
+  if (diff === 0) return 'TODAY';
+  if (diff === 1) return 'LAST NIGHT';
   if (diff < 7) {
-    const days = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
-    return 'on ' + days[date.getDay()];
+    const days = ['SUN.','MON.','TUE.','WED.','THU.','FRI.','SAT.'];
+    return 'LAST ' + days[date.getDay()];
   }
-  if (diff < 14) return 'last week';
-  if (diff < 21) return '2 weeks ago';
-  if (diff < 28) return '3 weeks ago';
-  if (diff < 60) return 'last month';
-  const months = ['january','february','march','april','may','june','july','august','september','october','november','december'];
-  return 'in ' + months[date.getMonth()] + (date.getFullYear() !== now.getFullYear() ? ' ' + date.getFullYear() : '');
+  if (diff < 14) return 'LAST WEEK';
+  if (diff < 21) return 'TWO WEEKS AGO';
+  if (diff < 28) return 'THREE WEEKS AGO';
+  if (diff < 60) return 'LAST MONTH';
+  const months = ['JAN.','FEB.','MAR.','APR.','MAY','JUN.','JUL.','AUG.','SEP.','OCT.','NOV.','DEC.'];
+  return months[date.getMonth()] + (date.getFullYear() !== now.getFullYear() ? ' ' + date.getFullYear() : '');
 }
 
 async function loadGlobalFeed() {
@@ -55,41 +55,65 @@ async function loadGlobalFeed() {
 
   const showsSnap = await getDocs(collectionGroup(db, 'shows')).catch(() => ({ docs: [] }));
   for (const d of showsSnap.docs) {
-    const { band, date } = d.data();
-    if (!band || !date) continue;
-    const parsed = parseDateStr(date);
+    const data = d.data();
+    if (!data.band || !data.date) continue;
+    const parsed = parseDateStr(data.date);
     if (!parsed || parsed >= now) continue;
-    entries.push({ uid: d.ref.parent.parent.id, label: band, date: parsed, type: 'show' });
+    entries.push({
+      uid: d.ref.parent.parent.id,
+      label: data.band,
+      venue: data.venue || '',
+      diary: data.diary || '',
+      photoUrl: data.photoUrl || '',
+      date: parsed,
+      type: 'show'
+    });
   }
 
   const festsSnap = await getDocs(collectionGroup(db, 'festivals')).catch(() => ({ docs: [] }));
   for (const d of festsSnap.docs) {
-    const { name, date } = d.data();
-    if (!name || !date) continue;
-    const parsed = parseDateStr(date);
+    const data = d.data();
+    if (!data.name || !data.date) continue;
+    const parsed = parseDateStr(data.date);
     if (!parsed || parsed >= now) continue;
-    entries.push({ uid: d.ref.parent.parent.id, label: name, date: parsed, type: 'festival' });
+    entries.push({
+      uid: d.ref.parent.parent.id,
+      label: data.name,
+      venue: data.venue || '',
+      diary: data.diary || '',
+      photoUrl: data.photoUrl || '',
+      date: parsed,
+      type: 'festival'
+    });
   }
 
   if (entries.length === 0) return;
 
   entries.sort((a, b) => b.date - a.date);
 
-  // Prefetch all usernames
   await Promise.all([...new Set(entries.map(e => e.uid))].map(uid => getUsername(uid)));
 
   feed.innerHTML = '';
   for (const entry of entries.slice(0, 100)) {
     const username = userCache.get(entry.uid) || 'someone';
     const verb = entry.type === 'festival' ? 'went to' : 'saw';
-    const row = document.createElement('div');
-    row.className = 'global-feed-row';
-    row.innerHTML =
-      `<span class="global-feed-user">${username}</span>` +
-      ` ${verb} ` +
-      `<span class="global-feed-artist">${entry.label}</span>` +
-      ` <span class="global-feed-time">${relativeDate(entry.date)}</span>`;
-    feed.appendChild(row);
+    const venueStr = entry.venue ? ` at <span class="fomo-venue">${entry.venue}</span>` : '';
+
+    const card = document.createElement('div');
+    card.className = 'fomo-card' + (entry.photoUrl ? ' fomo-card--photo' : '');
+
+    card.innerHTML =
+      `<div class="fomo-card-text">` +
+        `<div class="fomo-card-meta">` +
+          `<span class="fomo-card-time">${relativeDate(entry.date)}</span>` +
+          `<span class="fomo-card-user">@${username}</span>` +
+        `</div>` +
+        `<div class="fomo-card-action">${verb} <span class="fomo-artist">${entry.label}</span>${venueStr}</div>` +
+        (entry.diary ? `<div class="fomo-diary">“${entry.diary}”</div>` : '') +
+      `</div>` +
+      (entry.photoUrl ? `<div class="fomo-card-photo" style="background-image:url('${entry.photoUrl}')"></div>` : '');
+
+    feed.appendChild(card);
   }
 
   section.style.display = '';
@@ -97,6 +121,7 @@ async function loadGlobalFeed() {
 
 onAuthStateChanged(auth, (user) => {
   if (!user) return;
-  loadGlobalFeed().catch(err => console.error('global feed error:', err));
+  loadGlobalFeed().catch(err => console.error('fomo feed error:', err));
 });
+
 
