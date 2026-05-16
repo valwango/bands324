@@ -2320,4 +2320,375 @@ body {
   color: #aaa;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}}
+
+/* ============================================================
+   Profile Page (redesign) — pf-* classes
+   ============================================================ */
+
+.pf-page {
+  padding: 12px;
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Profile card */
+.pf-card {
+  border: 1px solid rgba(255,255,255,0.18);
+  padding: 18px 16px 16px;
+  cursor: pointer;
+  background: transparent;
+  user-select: none;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.pf-card:hover { border-color: rgba(255,255,255,0.38); }
+
+.pf-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 18px;
+}
+.pf-card-username {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.08em;
+}
+.pf-card-userid {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.07em;
+}
+.pf-card-top-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 10px;
+}
+.pf-card-top-row {
+  display: flex;
+  gap: 8px;
+}
+.pf-top-show {
+  flex: 1;
+  aspect-ratio: 1;
+  border: 1px solid rgba(255,255,255,0.15);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.pf-top-show::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+}
+.pf-top-show-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 4px;
+  line-height: 1.2;
+  position: relative;
+  z-index: 1;
+}
+
+/* Stats grid */
+.pf-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.pf-stat-box {
+  border: 1px solid rgba(255,255,255,0.18);
+  padding: 14px 16px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100px;
+  transition: border-color 0.15s;
+}
+.pf-stat-box:hover { border-color: rgba(255,255,255,0.4); }
+.pf-stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+}
+.pf-stat-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  text-align: right;
+}
+
+/* Add friends button */
+.pf-add-friends-btn {
+  width: 100%;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: transparent;
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 18px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.pf-add-friends-btn:hover { border-color: rgba(255,255,255,0.4); }
+
+/* Modals */
+.pf-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.6);
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+.pf-modal.open {
+  opacity: 1;
+  pointer-events: all;
+}
+.pf-modal-inner {
+  width: min(92vw, 440px);
+  background: #1a1a1a;
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 28px 20px 20px;
+  position: relative;
+  max-height: 88vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.pf-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  width: 28px;
+  height: 28px;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+}
+.pf-modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.pf-modal-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.45);
+  text-transform: uppercase;
+}
+.pf-modal-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  padding: 8px 0;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+.pf-modal-input:focus { border-bottom-color: rgba(255,255,255,0.6); }
+.pf-modal-input::placeholder { color: rgba(255,255,255,0.25); text-transform: uppercase; font-size: 0.8rem; }
+.pf-modal-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.25);
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 12px;
+  cursor: pointer;
+  width: 100%;
+  transition: border-color 0.15s;
+}
+.pf-modal-btn:hover { border-color: rgba(255,255,255,0.6); }
+.pf-modal-btn--danger {
+  border-color: rgba(255,80,80,0.25);
+  color: rgba(255,140,140,0.9);
+}
+.pf-modal-secondary-btn {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.65);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 7px 12px;
+  cursor: pointer;
+  align-self: flex-start;
+}
+.pf-modal-msg {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.55);
+  min-height: 16px;
+}
+.pf-modal-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #fff;
+  text-transform: uppercase;
+  padding-right: 32px;
+}
+
+/* Top shows picker */
+.pf-shows-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.pf-picker-item {
+  padding: 8px 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  cursor: pointer;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  transition: border-color 0.12s;
+}
+.pf-picker-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  transition: background 0.12s;
+}
+.pf-picker-item.selected { border-color: rgba(255,255,255,0.7); }
+.pf-picker-item.selected::before { background: rgba(255,255,255,0.12); }
+.pf-picker-item-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  position: relative;
+  z-index: 1;
+}
+.pf-picker-empty {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.35);
+}
+
+/* Friends modal */
+.pf-my-id-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.06em;
+  flex-wrap: wrap;
+}
+.pf-my-id-val {
+  color: #fff;
+  font-weight: 700;
+}
+.pf-tiny-btn {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.22);
+  color: rgba(255,255,255,0.65);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+.pf-tiny-btn--decline {
+  border-color: rgba(255,80,80,0.3);
+  color: rgba(255,120,120,0.8);
+}
+.pf-section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.35);
+  text-transform: uppercase;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 10px;
+}
+.pf-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.pf-list-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: #fff;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.pf-pending-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pf-pending-item span { flex: 1; }
+.pf-list-empty {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.3);
+  list-style: none;
+  padding: 4px 0;
 }
