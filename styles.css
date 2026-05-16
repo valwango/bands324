@@ -1591,6 +1591,74 @@ body {
 
 }
 
+/* Past block stack (blocks 6+) */
+.past-stack-wrapper {
+  position: relative;
+  cursor: pointer;
+}
+
+/* Collapsed: all blocks stacked at the same position */
+.past-stack-wrapper:not(.is-expanded) {
+  height: 100px;
+  padding-top: 0;
+}
+
+.past-stack-wrapper:not(.is-expanded) .block {
+  position: absolute;
+  top: 23px;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  transition: transform 0.35s ease;
+}
+
+/* Expanded: normal layout */
+.past-stack-wrapper.is-expanded {
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+.past-stack-wrapper.is-expanded .block {
+  pointer-events: auto;
+  position: relative;
+  margin-top: 0 !important;
+  transform: none !important;
+  transition: transform 0.35s ease;
+}
+
+.past-stack-minimize {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  padding: 6px 0 2px;
+  text-align: center;
+  width: 100%;
+  text-transform: lowercase;
+}
+.past-stack-minimize:hover {
+  color: var(--text);
+}
+.past-stack-wrapper.is-expanded .past-stack-minimize {
+  display: block;
+}
+
+@media (max-width: 700px) {
+  .past-stack-wrapper:not(.is-expanded) {
+    height: 50px;
+    padding-top: 8px;
+  }
+  .past-stack-wrapper:not(.is-expanded) .block:not(:first-child) {
+    margin-top: 0;
+  }
+}
+
 .editor-panel h2 {
   margin: 0 0 8px;
   font-size: 1rem;

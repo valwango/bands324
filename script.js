@@ -420,6 +420,74 @@ function listenToUserEvents(user) {
         else if(ev.type === 'festival') pastBlocks.appendChild(createFestivalBlock(ev, idx, 'past'));
       });
 
+      // Stack past blocks beyond the first 5 into a collapsible pile
+      const pastChildren = Array.from(pastBlocks.children);
+      const visiblePast = Math.max(0, 5 - upcoming.length);
+      if (pastChildren.length > visiblePast) {
+        const stackWrapper = document.createElement('div');
+        stackWrapper.className = 'past-stack-wrapper';
+
+        const rotations = [-0.4, 0.5, -0.3, 0.6, -0.5, 0.3, -0.7, 0.5, -0.4, 0.6];
+        const yOffsets  = [0, -6, 8, -10, 5, -8, 10, -12, 7, -9];
+        // 4 combos × 2 variations, interleaved so every 4 blocks are balanced
+        const stackPattern = [
+          { rot: -0.5, dy: -8  },  // above + tilt-left
+          { rot:  0.5, dy: -8  },  // above + tilt-right
+          { rot: -0.5, dy:  5  },  // below + tilt-left
+          { rot:  0.5, dy:  5  },  // below + tilt-right
+          { rot: -0.4, dy: -6  },  // above + tilt-left
+          { rot:  0.6, dy: -6  },  // above + tilt-right
+          { rot: -0.6, dy:  4  },  // below + tilt-left
+          { rot:  0.4, dy:  4  },  // below + tilt-right
+        ];
+        const blocksToStack = pastChildren.slice(visiblePast);
+        const totalBlocks = blocksToStack.length;
+
+        blocksToStack.forEach((b, i) => {
+          const { rot, dy } = stackPattern[i % stackPattern.length];
+          b.style.zIndex = totalBlocks - i;
+          b.dataset.stackRot = rot;
+          b.dataset.stackDy  = dy;
+          stackWrapper.appendChild(b);
+        });
+
+        const minimizeBtn = document.createElement('button');
+        minimizeBtn.type = 'button';
+        minimizeBtn.className = 'past-stack-minimize';
+        minimizeBtn.textContent = 'minimize bands';
+        stackWrapper.appendChild(minimizeBtn);
+
+        pastBlocks.appendChild(stackWrapper);
+
+        function applyStackTransforms() {
+          // First pass: clear transforms so rects are unaffected
+          blocksToStack.forEach((b) => {
+            b.style.transform = 'none';
+            b.style.transformOrigin = '';
+          });
+          // Second pass: measure true position, then apply
+          blocksToStack.forEach((b) => {
+            const rot = parseFloat(b.dataset.stackRot);
+            const dy  = parseFloat(b.dataset.stackDy);
+            const rect = b.getBoundingClientRect();
+            const pivot = window.innerWidth / 2 - rect.left;
+            b.style.transformOrigin = `${pivot}px 50%`;
+            b.style.transform = `rotate(${rot}deg) translateY(${dy}px)`;
+          });
+        }
+
+        requestAnimationFrame(applyStackTransforms);
+        window.addEventListener('resize', applyStackTransforms);
+
+        stackWrapper.addEventListener('click', () => {
+          stackWrapper.classList.add('is-expanded');
+        });
+        minimizeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          stackWrapper.classList.remove('is-expanded');
+        });
+      }
+
       const revealBlocks = () => {
         _blocksRevealed = true;
         if (upcomingSection) upcomingSection.classList.remove('blocks-section--hidden');
