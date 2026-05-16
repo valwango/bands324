@@ -105,8 +105,8 @@ async function loadGlobalFeed() {
     card.innerHTML =
       `<div class="fomo-card-text">` +
         `<div class="fomo-card-meta">` +
+          `<span class="fomo-card-user">${username}</span>` +
           `<span class="fomo-card-time">${relativeDate(entry.date)}</span>` +
-          `<span class="fomo-card-user">@${username}</span>` +
         `</div>` +
         `<div class="fomo-card-action">${verb} <span class="fomo-artist">${entry.label}</span>${venueStr}</div>` +
         (entry.diary ? `<div class="fomo-diary">“${entry.diary}”</div>` : '') +
