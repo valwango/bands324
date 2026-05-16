@@ -18,6 +18,27 @@ function daysUntil(dateStr) {
   return Math.round((d - now) / (1000*60*60*24));
 }
 
+function relativeDate(date) {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const diff = Math.round((now - date) / (1000 * 60 * 60 * 24));
+  if (diff === 0) return 'TODAY';
+  if (diff === 1) return 'LAST NIGHT';
+  if (diff < 7) {
+    const days = ['SUN.','MON.','TUE.','WED.','THU.','FRI.','SAT.'];
+    return 'LAST ' + days[date.getDay()];
+  }
+  if (diff < 14) return 'LAST WEEK';
+  if (diff < 21) return 'TWO WEEKS AGO';
+  if (diff < 28) return 'THREE WEEKS AGO';
+  if (diff < 60) return 'LAST MONTH';
+  const monthWords = ['','ONE','TWO','THREE','FOUR','FIVE','SIX','SEVEN','EIGHT','NINE','TEN','ELEVEN'];
+  const monthsAgo = Math.min(11, Math.round(diff / 30.44));
+  if (date.getFullYear() === now.getFullYear()) return (monthWords[monthsAgo] || monthsAgo) + ' MONTHS AGO';
+  const months = ['JAN.','FEB.','MAR.','APR.','MAY','JUN.','JUL.','AUG.','SEP.','OCT.','NOV.','DEC.'];
+  return months[date.getMonth()] + ' ' + date.getFullYear();
+}
+
 onAuthStateChanged(auth, async (user) => {
   if (!user) return;
 
@@ -56,6 +77,7 @@ onAuthStateChanged(auth, async (user) => {
 
   const now = new Date(); now.setHours(0,0,0,0);
   const friendCards = [];
+  const pastEntries = [];
 
   for (const friendDoc of friendsSnap.docs) {
     const { uid: friendUid, username } = friendDoc.data();
@@ -72,11 +94,20 @@ onAuthStateChanged(auth, async (user) => {
       const ev = d.data();
       const days = daysUntil(ev.date);
       if (days !== null && days >= 0) upcoming.push({ ...ev, type: 'show', days });
+      // collect past entries visible to friends
+      if (days !== null && days < 0 && ev.privacy !== 'secret') {
+        const parsed = parseDate(ev.date);
+        if (parsed) pastEntries.push({ username, label: ev.band, venue: ev.venue || '', diary: ev.diary || '', photoUrl: ev.photoUrl || '', date: parsed, type: 'show' });
+      }
     });
     festivalsSnap.docs.forEach(d => {
       const ev = d.data();
       const days = daysUntil(ev.date);
       if (days !== null && days >= 0) upcoming.push({ ...ev, type: 'festival', days });
+      if (days !== null && days < 0 && ev.privacy !== 'secret') {
+        const parsed = parseDate(ev.date);
+        if (parsed) pastEntries.push({ username, label: ev.name, venue: ev.venue || '', diary: ev.diary || '', photoUrl: ev.photoUrl || '', date: parsed, type: 'festival' });
+      }
     });
     upcoming.sort((a, b) => a.days - b.days);
 
@@ -122,4 +153,30 @@ onAuthStateChanged(auth, async (user) => {
 
     listEl.appendChild(card);
   });
+
+  // --- Friends Feed (past shows) ---
+  const feedSection = document.getElementById('friends-feed-section');
+  const feedEl = document.getElementById('friends-feed');
+  if (feedSection && feedEl && pastEntries.length > 0) {
+    pastEntries.sort((a, b) => b.date - a.date);
+    feedEl.innerHTML = '';
+    for (const entry of pastEntries.slice(0, 100)) {
+      const verb = entry.type === 'festival' ? 'went to' : 'saw';
+      const venueStr = entry.venue ? ` at <span class="fomo-venue">${entry.venue}</span>` : '';
+      const card = document.createElement('div');
+      card.className = 'fomo-card';
+      card.innerHTML =
+        `<div class="fomo-card-text">` +
+          `<div class="fomo-card-meta">` +
+            `<span class="fomo-card-user">${entry.username || 'friend'}</span>` +
+            `<span class="fomo-card-time">${relativeDate(entry.date)}</span>` +
+          `</div>` +
+          `<div class="fomo-card-action">${verb} <span class="fomo-artist">${entry.label}</span>${venueStr}</div>` +
+          (entry.diary ? `<div class="fomo-diary">“${entry.diary}”</div>` : '') +
+        `</div>` +
+        (entry.photoUrl ? `<div class="fomo-card-photo" style="background-image:url('${entry.photoUrl}')"></div>` : '');
+      feedEl.appendChild(card);
+    }
+    feedSection.style.display = '';
+  }
 });
