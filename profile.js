@@ -1,7 +1,7 @@
 // profile.js
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged, updateProfile, updateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { doc, getDoc, setDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { goToPage } from "./navigation.js";
 
 // Elements
@@ -210,4 +210,99 @@ onAuthStateChanged(auth, async (user) => {
       console.error(err);
     }
   };
+
+  // -------------------
+  // User ID (provision if missing)
+  // -------------------
+  let myUserId = userDoc.exists() ? userDoc.data().userId : null;
+  if (!myUserId) {
+    myUserId = Math.random().toString(36).slice(2, 8);
+    await setDoc(userDocRef, { userId: myUserId }, { merge: true });
+    await setDoc(doc(db, "userIds", myUserId), { uid: user.uid });
+  }
+  const userIdDisplay = document.getElementById('my-user-id');
+  if (userIdDisplay) userIdDisplay.textContent = myUserId;
+
+  const copyUserIdBtn = document.getElementById('copy-user-id-btn');
+  if (copyUserIdBtn) {
+    copyUserIdBtn.onclick = () => {
+      navigator.clipboard.writeText(myUserId).then(() => {
+        copyUserIdBtn.textContent = 'copied!';
+        setTimeout(() => { copyUserIdBtn.textContent = 'copy'; }, 1500);
+      });
+    };
+  }
+
+  const copyLinkBtn = document.getElementById('copy-invite-link-btn');
+  if (copyLinkBtn) {
+    copyLinkBtn.onclick = () => {
+      const link = `${location.origin}${location.pathname.replace('profile.html','index.html')}?addFriend=${myUserId}`;
+      navigator.clipboard.writeText(link).then(() => {
+        copyLinkBtn.textContent = 'copied!';
+        setTimeout(() => { copyLinkBtn.textContent = 'copy invite link'; }, 1500);
+      });
+    };
+  }
+
+  // -------------------
+  // Friends — add by user ID
+  // -------------------
+  const addFriendInput = document.getElementById('add-friend-input');
+  const addFriendBtn = document.getElementById('add-friend-btn');
+  const addFriendMsg = document.getElementById('add-friend-msg');
+  const friendsList = document.getElementById('friends-list');
+
+  async function loadFriends() {
+    if (!friendsList) return;
+    friendsList.innerHTML = '';
+    const snap = await getDocs(collection(db, "users", user.uid, "friends"));
+    if (snap.empty) {
+      friendsList.innerHTML = '<li class="friends-empty">no friends added yet</li>';
+      return;
+    }
+    for (const d of snap.docs) {
+      const data = d.data();
+      const li = document.createElement('li');
+      li.className = 'friends-item';
+      li.textContent = data.username || data.userId || d.id;
+      friendsList.appendChild(li);
+    }
+  }
+  loadFriends();
+
+  if (addFriendBtn) {
+    addFriendBtn.onclick = async () => {
+      const inputId = (addFriendInput.value || '').trim().toLowerCase();
+      if (!inputId) return;
+      if (inputId === myUserId) {
+        addFriendMsg.textContent = "that's you!";
+        return;
+      }
+      addFriendMsg.textContent = '';
+      addFriendBtn.disabled = true;
+      try {
+        const idDoc = await getDoc(doc(db, "userIds", inputId));
+        if (!idDoc.exists()) {
+          addFriendMsg.textContent = 'user not found';
+          addFriendBtn.disabled = false;
+          return;
+        }
+        const friendUid = idDoc.data().uid;
+        const friendUserDoc = await getDoc(doc(db, "users", friendUid));
+        const friendData = friendUserDoc.exists() ? friendUserDoc.data() : {};
+        await setDoc(doc(db, "users", user.uid, "friends", friendUid), {
+          userId: inputId,
+          username: friendData.username || '',
+          uid: friendUid,
+        });
+        addFriendInput.value = '';
+        addFriendMsg.textContent = `added ${friendData.username || inputId}!`;
+        loadFriends();
+      } catch (err) {
+        addFriendMsg.textContent = 'error: ' + err.message;
+        console.error(err);
+      }
+      addFriendBtn.disabled = false;
+    };
+  }
 });

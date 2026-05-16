@@ -1659,6 +1659,182 @@ body {
   }
 }
 
+/* =====================
+   Friends — index page
+   ===================== */
+.friends-index-section {
+  padding: 24px 12px 12px;
+}
+
+.friends-index-header {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: .08rem;
+  color: var(--muted);
+  text-transform: lowercase;
+  margin-bottom: 14px;
+}
+
+.friend-card {
+  margin-bottom: 20px;
+}
+
+.friend-card-name {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  text-transform: lowercase;
+  margin-bottom: 6px;
+  opacity: 0.6;
+}
+
+.friend-show-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.friend-show-days {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--muted);
+  min-width: 30px;
+  flex-shrink: 0;
+}
+
+.friend-show-band {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text);
+  flex: 1 1 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.friend-show-venue {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.68rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 40%;
+}
+
+/* =====================
+   Friends — profile page
+   ===================== */
+.friends-section {
+  padding: 24px 0 12px;
+}
+
+.friends-header {
+  margin-bottom: 10px;
+}
+
+.friends-title {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  color: var(--muted);
+}
+
+.friends-my-id {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.friends-id-value {
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.friends-add-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.friends-input {
+  flex: 1;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 4px;
+  color: var(--text);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.8rem;
+  padding: 6px 10px;
+  outline: none;
+}
+.friends-input:focus {
+  border-color: rgba(255,255,255,0.35);
+}
+
+.friends-small-btn {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 4px;
+  color: var(--text);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  padding: 5px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  text-transform: lowercase;
+}
+.friends-small-btn:hover {
+  background: rgba(255,255,255,0.18);
+}
+
+.friends-msg {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  min-height: 16px;
+  margin-bottom: 10px;
+}
+
+.friends-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.friends-item {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.78rem;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  color: var(--text);
+}
+
+.friends-empty {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  list-style: none;
+}
+
 .editor-panel h2 {
   margin: 0 0 8px;
   font-size: 1rem;

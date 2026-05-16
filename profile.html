@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
-  <script src="asset-version.js?v=20260503a"></script>
+  <script src="asset-version.js?v=20260515a"></script>
   <link rel="stylesheet" href="styles.css" id="app-stylesheet" />
   <script>document.getElementById("app-stylesheet").href = window.assetUrl("styles.css");</script>
 </head>
@@ -83,6 +83,24 @@
   </div>
 
     <!-- logout button moved above -->
+
+    <!-- Friends section -->
+    <div class="friends-section">
+      <div class="friends-header">
+        <span class="friends-title">friends</span>
+      </div>
+      <div class="friends-my-id">
+        your id: <span id="my-user-id" class="friends-id-value">—</span>
+        <button id="copy-user-id-btn" class="friends-small-btn">copy</button>
+        <button id="copy-invite-link-btn" class="friends-small-btn">copy invite link</button>
+      </div>
+      <div class="friends-add-row">
+        <input id="add-friend-input" type="text" class="friends-input" placeholder="enter friend's user id" autocomplete="off" autocapitalize="none" spellcheck="false" />
+        <button id="add-friend-btn" class="friends-small-btn">add</button>
+      </div>
+      <div id="add-friend-msg" class="friends-msg"></div>
+      <ul id="friends-list" class="friends-list"></ul>
+    </div>
   </main>
 </body>
 <script type="module" src="script.js"></script>
