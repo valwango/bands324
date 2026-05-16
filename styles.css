@@ -1605,7 +1605,7 @@ body {
 
 .past-stack-wrapper:not(.is-expanded) .block {
   position: absolute;
-  top: 23px;
+  top: 18px;
   left: 0;
   width: 100%;
   pointer-events: none;
