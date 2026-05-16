@@ -1835,6 +1835,67 @@ body {
   list-style: none;
 }
 
+/* =====================
+   Global bands ticker
+   ===================== */
+.global-section {
+  padding: 24px 0 32px;
+  overflow: hidden;
+}
+
+.global-header {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: .08rem;
+  color: var(--muted);
+  text-transform: lowercase;
+  margin-bottom: 14px;
+  padding: 0 12px;
+}
+
+.global-ticker-wrap {
+  overflow: hidden;
+  width: 100%;
+  mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+}
+
+.global-ticker {
+  display: flex;
+  gap: 0;
+  white-space: nowrap;
+  animation: ticker-scroll 40s linear infinite;
+  width: max-content;
+}
+
+.global-ticker:hover {
+  animation-play-state: paused;
+}
+
+.global-ticker-item {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+  opacity: 0.55;
+  padding: 0 18px;
+  flex-shrink: 0;
+}
+
+.global-ticker-item::after {
+  content: "·";
+  margin-left: 18px;
+  opacity: 0.3;
+}
+
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
 .editor-panel h2 {
   margin: 0 0 8px;
   font-size: 1rem;
