@@ -60,7 +60,7 @@ body {
 }
 /* --- Login Page --- */
 .login-page {
-  background: #3a3a3a;
+  background: #222;
   min-height: 100vh;
   margin: 0;
   display: flex;
