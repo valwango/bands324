@@ -29,8 +29,11 @@ function relativeDate(date) {
   if (diff < 21) return 'TWO WEEKS AGO';
   if (diff < 28) return 'THREE WEEKS AGO';
   if (diff < 60) return 'LAST MONTH';
+  const monthWords = ['','ONE','TWO','THREE','FOUR','FIVE','SIX','SEVEN','EIGHT','NINE','TEN','ELEVEN'];
+  const monthsAgo = Math.min(11, Math.round(diff / 30.44));
+  if (date.getFullYear() === now.getFullYear()) return (monthWords[monthsAgo] || monthsAgo) + ' MONTHS AGO';
   const months = ['JAN.','FEB.','MAR.','APR.','MAY','JUN.','JUL.','AUG.','SEP.','OCT.','NOV.','DEC.'];
-  return months[date.getMonth()] + (date.getFullYear() !== now.getFullYear() ? ' ' + date.getFullYear() : '');
+  return months[date.getMonth()] + ' ' + date.getFullYear();
 }
 
 async function loadGlobalFeed() {
