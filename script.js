@@ -434,7 +434,7 @@ function listenToUserEvents(user) {
           { rot: -0.5, dy: -8  },  // above + tilt-left
           { rot:  0.5, dy: -8  },  // above + tilt-right
           { rot: -0.5, dy: -12 },  // above + tilt-left
-          { rot:  0.5, dy:  5  },  // below + tilt-right
+          { rot:  0.5, dy: -10 },  // above + tilt-right
           { rot: -0.4, dy: -6  },  // above + tilt-left
           { rot:  0.6, dy: -6  },  // above + tilt-right
           { rot: -0.6, dy:  4  },  // below + tilt-left
