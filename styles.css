@@ -1866,10 +1866,9 @@ body {
   display: flex;
   align-items: stretch;
   border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 4px;
   overflow: hidden;
   font-family: "JetBrains Mono", monospace;
-  background: rgba(255,255,255,0.03);
+  background: transparent;
 }
 
 .fomo-card-text {
