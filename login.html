@@ -8,55 +8,59 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body style="background: #222;">
+<body class="login-page">
   <div class="login-container">
-    <div class="login-title">login</div>
+    <div class="login-wordmark">WRIPBANDS</div>
+    <div class="login-tagline">I NEED TO THINK OF A BETTER LINE</div>
+
     <form id="login-form" autocomplete="off">
       <div class="login-error" id="login-error"></div>
-      <input type="text" id="username" class="login-input" placeholder="email" required autofocus />
-      <input type="password" id="password" class="login-input" placeholder="password" required />
-      <button type="submit" class="login-btn">log in</button>
+      <input type="text" id="username" class="login-input" placeholder="USERNAME" required autofocus />
+      <input type="password" id="password" class="login-input" placeholder="PASSWORD" required />
+      <button type="submit" class="login-btn" style="display:none;">log in</button>
     </form>
+
+    <div class="login-signup-block">
+      <div class="login-signup-prompt">FIRST SHOW?</div>
+      <a href="./signup.html" class="login-signup-cta">CREATE AN ACCOUNT</a>
+    </div>
   </div>
-  <div class="login-signup-text">
-  don't have an account? <a href="./signup.html" class="login-signup-link">sign up</a>
-</div>
- <script type="module">
-  // Import Firebase
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  // Your config here
-  const firebaseConfig = {
-   apiKey: "AIzaSyAavRMHSoKc9IxmyUb7W_IbLNa-pmVoUVw",
-  authDomain: "bands322-98e2b.firebaseapp.com",
-  projectId: "bands322-98e2b",
-  storageBucket: "bands322-98e2b.firebasestorage.app",
-  messagingSenderId: "255200010894",
-  appId: "1:255200010894:web:8e08f90861869333129fdf",
-  measurementId: "G-Y1XTYDZVH6"
-  };
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  // Init Firebase
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+    const firebaseConfig = {
+      apiKey: "AIzaSyAavRMHSoKc9IxmyUb7W_IbLNa-pmVoUVw",
+      authDomain: "bands322-98e2b.firebaseapp.com",
+      projectId: "bands322-98e2b",
+      storageBucket: "bands322-98e2b.firebasestorage.app",
+      messagingSenderId: "255200010894",
+      appId: "1:255200010894:web:8e08f90861869333129fdf",
+      measurementId: "G-Y1XTYDZVH6"
+    };
 
-  const form = document.getElementById('login-form');
-  const errorDiv = document.getElementById('login-error');
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const form = document.getElementById('login-form');
+    const errorDiv = document.getElementById('login-error');
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = './index.html';
+      } catch (error) {
+        errorDiv.textContent = "Invalid login credentials.";
+      }
+    });
 
-    const email = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value;
-
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      window.location.href = './index.html';
-    } catch (error) {
-      errorDiv.textContent = "Invalid login credentials.";
-    }
-  });
-</script>
+    // Submit on Enter from either field
+    document.getElementById('password').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') form.dispatchEvent(new Event('submit'));
+    });
+  </script>
 </body>
 </html>

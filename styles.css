@@ -58,7 +58,114 @@ body {
   color: #ffe066;
   text-decoration: none;
 }
-/* --- Login Signup Text Styles --- */
+/* --- Login Page --- */
+.login-page {
+  background: #3a3a3a;
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 480px;
+  padding: 0 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.login-wordmark {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.login-tagline {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.55);
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.login-input {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 14px 16px;
+  border: 1.5px solid rgba(255,255,255,0.35);
+  border-radius: 0;
+  background: transparent;
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+
+.login-input::placeholder {
+  color: rgba(255,255,255,0.45);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.login-input:focus {
+  border-color: rgba(255,255,255,0.75);
+}
+
+.login-btn {
+  display: none;
+}
+
+.login-signup-block {
+  margin-top: 28px;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.7;
+}
+
+.login-signup-prompt {
+  font-size: 0.78rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.55);
+}
+
+.login-signup-cta {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #fff;
+  text-decoration: none;
+}
+
+.login-signup-cta:hover {
+  text-decoration: underline;
+}
+
+.login-error {
+  color: #ff5c5c;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  margin-bottom: 10px;
+  min-height: 18px;
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+/* legacy classes kept for signup page */
 .login-signup-text {
   margin-top: 14px;
   font-size: 0.9em;
@@ -69,65 +176,12 @@ body {
   color: #ffe066;
   text-decoration: underline;
 }
-/* --- Login Page Styles --- */
-.login-container {
-  max-width: 320px;
-  margin: 60px auto 0 auto;
-  background: rgba(40,40,40,0.95);
-  border-radius: 12px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.18);
-  padding: 32px 24px 24px 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
 .login-title {
   font-family: 'JetBrains Mono', monospace;
   font-size: 1.5em;
   color: #fff;
   margin-bottom: 0px;
   letter-spacing: 1px;
-}
-.login-input {
-  width: 100%;
-  margin-bottom: 18px;
-  padding: 10px 12px;
-  border: none;
-  border-radius: 6px;
-  background: rgba(255,255,255,0.08);
-  color: #fff;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 1em;
-  outline: none;
-  transition: background 0.2s;
-}
-.login-input:focus {
-  background: rgba(255,255,255,0.18);
-}
-.login-btn {
-  width: 100%;
-  padding: 10px 0;
-  background: #fff;
-  color: #222;
-  border: none;
-  border-radius: 6px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 1.1em;
-  font-weight: 700;
-  cursor: pointer;
-  margin-top: 8px;
-  transition: background 0.2s, color 0.2s;
-}
-.login-btn:hover {
-  background: #ffe066;
-  color: #222;
-}
-.login-error {
-  color: #ff5c5c;
-  font-size: 0.98em;
-  margin-bottom: 10px;
-  min-height: 20px;
-  text-align: center;
 }
 
 .modal-content {
