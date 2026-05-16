@@ -1,4 +1,4 @@
-window.ASSET_VERSION = "20260516m";
+window.ASSET_VERSION = "20260516n";
 window.assetUrl = function assetUrl(path) {
   const normalizedPath = /^(\.\/|\.\.\/|\/|https?:)/.test(path) ? path : `./${path}`;
   const separator = normalizedPath.includes("?") ? "&" : "?";
