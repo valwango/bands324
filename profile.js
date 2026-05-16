@@ -274,11 +274,10 @@ onAuthStateChanged(auth, async (user) => {
   };
 
   // -------------------
-  // User ID (provision if missing, sequential)
+  // User ID (provision if missing or not 6-digit numeric)
   // -------------------
-  // User ID (provision if missing, sequential 6-digit)
-  // -------------------
-  if (!myUserId) {
+  let myUserId = userDoc.exists() ? userDoc.data().userId : null;
+  if (!myUserId || !/^\d{6}$/.test(myUserId)) {
     const counterRef = doc(db, "counters", "userCount");
     myUserId = await runTransaction(db, async (transaction) => {
       const counterDoc = await transaction.get(counterRef);
