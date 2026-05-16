@@ -7,10 +7,7 @@ const section = document.getElementById('global-section');
 const ticker = document.getElementById('global-ticker');
 if (!section || !ticker) throw new Error('global section missing');
 
-onAuthStateChanged(auth, (user) => {
-  if (!user) return;
-  loadGlobalBands().catch(err => console.error('global bands error:', err));
-});
+async function loadGlobalBands() {
   const names = new Set();
 
   // Read all shows across all users
@@ -36,7 +33,7 @@ onAuthStateChanged(auth, (user) => {
     a.replace(/^the\s+/i, '').localeCompare(b.replace(/^the\s+/i, ''))
   );
 
-  // Build ticker: duplicate list so seamless loop works
+  // Build ticker: duplicate list for seamless loop
   const makeItems = () => sorted.map(name => {
     const span = document.createElement('span');
     span.className = 'global-ticker-item';
@@ -45,14 +42,19 @@ onAuthStateChanged(auth, (user) => {
   });
 
   makeItems().forEach(el => ticker.appendChild(el));
-  makeItems().forEach(el => ticker.appendChild(el)); // duplicate for seamless loop
+  makeItems().forEach(el => ticker.appendChild(el));
 
   // Adjust speed based on content width
-  const totalWidth = ticker.scrollWidth / 2;
-  const speed = Math.max(20, totalWidth / 80); // ~80px/s
-  ticker.style.animationDuration = `${speed}s`;
+  requestAnimationFrame(() => {
+    const totalWidth = ticker.scrollWidth / 2;
+    const speed = Math.max(20, totalWidth / 80);
+    ticker.style.animationDuration = `${speed}s`;
+  });
 
   section.style.display = '';
 }
 
-async function loadGlobalBands() {
+onAuthStateChanged(auth, (user) => {
+  if (!user) return;
+  loadGlobalBands().catch(err => console.error('global bands error:', err));
+});
