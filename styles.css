@@ -2327,7 +2327,7 @@ body {
    ============================================================ */
 
 .pf-page {
-  padding: 20px 16px;
+  padding: 40px 16px 20px;
   max-width: 600px;
   margin: 0 auto;
   display: flex;
