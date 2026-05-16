@@ -404,6 +404,19 @@ function listenToUserEvents(user) {
       upcomingBlocks.innerHTML = '';
       pastBlocks.innerHTML = '';
 
+      // Placeholder for brand-new users with no bands
+      if (allEvents.length === 0) {
+        const placeholder = document.createElement('a');
+        placeholder.href = 'star.html';
+        placeholder.className = 'block block--placeholder';
+        placeholder.style.backgroundImage = "url('assets/blackband.png')";
+        placeholder.innerHTML = '<div class="block-placeholder-label">ADD YOUR FIRST BAND</div>';
+        upcomingBlocks.appendChild(placeholder);
+        if (upcomingSection) upcomingSection.classList.remove('blocks-section--hidden');
+        if (!hasRenderedOnce) { hasRenderedOnce = true; window.clearTimeout(loaderTimeout); hideLoader(); }
+        return;
+      }
+
       // Hide sections while refitting to prevent visible bouncing
       const upcomingSection = document.getElementById('upcoming-section');
       const pastSection = document.getElementById('past-section');

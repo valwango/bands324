@@ -1423,6 +1423,21 @@ body {
   z-index: 0;
 }
 
+.block--placeholder {
+  text-decoration: none;
+  cursor: pointer;
+  justify-content: center;
+}
+
+.block-placeholder-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.45);
+  text-align: center;
+}
+
 .block::after {
   content: '';
   position: absolute;
