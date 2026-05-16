@@ -413,7 +413,16 @@ function listenToUserEvents(user) {
         placeholder.href = 'star.html';
         placeholder.className = 'block block--placeholder';
         placeholder.style.backgroundImage = "url('assets/blackband.png')";
-        placeholder.innerHTML = '<div class="block-placeholder-label">ADD YOUR FIRST BAND</div>';
+        const stickyDiv = document.createElement('div');
+        stickyDiv.className = 'days';
+        const todayDate = new Date();
+        const mm = String(todayDate.getMonth() + 1).padStart(2, '0');
+        const dd = String(todayDate.getDate()).padStart(2, '0');
+        const yy = String(todayDate.getFullYear()).slice(-2);
+        stickyDiv.innerHTML = `<span class="past-date-label">${mm}/${dd}/${yy}</span>`;
+        stickyDiv.style.backgroundImage = "url('assets/sticky.png')";
+        placeholder.appendChild(stickyDiv);
+        placeholder.innerHTML += '<div class="block-placeholder-label">ADD YOUR FIRST BAND</div>';
         upcomingBlocks.appendChild(placeholder);
         if (upcomingSection) upcomingSection.classList.remove('blocks-section--hidden');
         if (!hasRenderedOnce) { hasRenderedOnce = true; window.clearTimeout(loaderTimeout); hideLoader(); }

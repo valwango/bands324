@@ -1426,16 +1426,22 @@ body {
 .block--placeholder {
   text-decoration: none;
   cursor: pointer;
-  justify-content: center;
 }
 
 .block-placeholder-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: rgba(255,255,255,0.45);
+  position: absolute;
+  left: 0;
+  right: 0;
   text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.96rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #fff;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 3;
 }
 
 .block::after {
