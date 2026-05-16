@@ -1,7 +1,7 @@
 // profile.js
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged, updateProfile, verifyBeforeUpdateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { doc, getDoc, setDoc, deleteDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { doc, getDoc, setDoc, collection, getDocs, query, where, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { goToPage } from "./navigation.js";
 
 // Elements
@@ -26,10 +26,9 @@ onAuthStateChanged(auth, async (user) => {
   const userDocRef = doc(db, "users", user.uid);
   const userDoc = await getDoc(userDocRef);
 
-  // Set initial username (userId and username are the same field)
-  const storedUserId = userDoc.exists() && userDoc.data().userId ? userDoc.data().userId : '';
+  // Set initial username (screen name) and load userId separately
   const storedUsername = userDoc.exists() && userDoc.data().username ? userDoc.data().username : (user.displayName || '');
-  usernameInput.value = storedUserId || storedUsername;
+  usernameInput.value = storedUsername;
   emailInput.value = user.email;
 
   // -------------------
@@ -193,26 +192,13 @@ onAuthStateChanged(auth, async (user) => {
   // Save profile changes
   // -------------------
   async function doSave() {
-    const newUser = usernameInput.value.trim().toLowerCase().replace(/[^a-z0-9_\-]/g, '');
+    const newUsername = usernameInput.value.trim();
     const newEmail = emailInput.value.trim();
-    if (!newUser) { alert('username is required'); return; }
-    if (newUser.length < 2) { alert('username must be at least 2 characters'); return; }
+    if (!newUsername) { alert('username is required'); return; }
     if (!newEmail) return;
 
-    const oldUserId = myUserId;
-    if (newUser !== oldUserId) {
-      const existingDoc = await getDoc(doc(db, "userIds", newUser));
-      if (existingDoc.exists() && existingDoc.data().uid !== user.uid) {
-        saveBtn.textContent = 'username taken';
-        setTimeout(() => { saveBtn.textContent = 'save changes'; }, 2000);
-        return;
-      }
-      if (oldUserId) await deleteDoc(doc(db, "userIds", oldUserId));
-      await setDoc(doc(db, "userIds", newUser), { uid: user.uid });
-    }
-
-    await setDoc(userDocRef, { username: newUser, userId: newUser }, { merge: true });
-    await updateProfile(user, { displayName: newUser });
+    await setDoc(userDocRef, { username: newUsername }, { merge: true });
+    await updateProfile(user, { displayName: newUsername });
     if (newEmail !== user.email) {
       await verifyBeforeUpdateEmail(user, newEmail);
       saveBtn.textContent = 'verification email sent!';
@@ -222,18 +208,10 @@ onAuthStateChanged(auth, async (user) => {
       setTimeout(() => { saveBtn.textContent = 'save changes'; }, 1200);
     }
 
-    myUserId = newUser;
-    usernameInput.value = newUser;
-    if (userIdDisplay) userIdDisplay.textContent = newUser;
+    usernameInput.value = newUsername;
   }
 
   saveBtn.onclick = async () => {
-    const newUser = usernameInput.value.trim().toLowerCase().replace(/[^a-z0-9_\-]/g, '');
-    const newEmail = emailInput.value.trim();
-    if (!newUser) { alert('username is required'); return; }
-    if (newUser.length < 2) { alert('username must be at least 2 characters'); return; }
-    if (!newEmail) return;
-
     try {
       await doSave();
     } catch (err) {
@@ -296,14 +274,20 @@ onAuthStateChanged(auth, async (user) => {
   };
 
   // -------------------
-  // User ID (provision if missing)
+  // User ID (provision if missing, sequential)
   // -------------------
-  let myUserId = userDoc.exists() ? userDoc.data().userId : null;
+  // User ID (provision if missing, sequential 6-digit)
+  // -------------------
   if (!myUserId) {
-    myUserId = Math.random().toString(36).slice(2, 8);
-    await setDoc(userDocRef, { userId: myUserId, username: myUserId }, { merge: true });
+    const counterRef = doc(db, "counters", "userCount");
+    myUserId = await runTransaction(db, async (transaction) => {
+      const counterDoc = await transaction.get(counterRef);
+      const nextCount = (counterDoc.exists() ? counterDoc.data().count : 0) + 1;
+      transaction.set(counterRef, { count: nextCount });
+      return String(nextCount).padStart(6, '0');
+    });
+    await setDoc(userDocRef, { userId: myUserId }, { merge: true });
     await setDoc(doc(db, "userIds", myUserId), { uid: user.uid });
-    usernameInput.value = myUserId;
   }
   const userIdDisplay = document.getElementById('my-user-id');
   if (userIdDisplay) userIdDisplay.textContent = myUserId;
