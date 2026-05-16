@@ -1,6 +1,6 @@
 // profile.js
 import { auth, db } from "./firebase-config.js";
-import { onAuthStateChanged, updateProfile, updateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { onAuthStateChanged, updateProfile, verifyBeforeUpdateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc, setDoc, deleteDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { goToPage } from "./navigation.js";
 
@@ -182,15 +182,17 @@ onAuthStateChanged(auth, async (user) => {
       await setDoc(userDocRef, { username: newUser, userId: newUser }, { merge: true });
       await updateProfile(user, { displayName: newUser });
       if (newEmail !== user.email) {
-        await updateEmail(user, newEmail);
+        await verifyBeforeUpdateEmail(user, newEmail);
+        saveBtn.textContent = 'verification email sent!';
+        setTimeout(() => { saveBtn.textContent = 'save changes'; }, 3000);
+      } else {
+        saveBtn.textContent = 'saved!';
+        setTimeout(() => { saveBtn.textContent = 'save changes'; }, 1200);
       }
 
       myUserId = newUser;
       usernameInput.value = newUser;
       if (userIdDisplay) userIdDisplay.textContent = newUser;
-
-      saveBtn.textContent = 'saved!';
-      setTimeout(() => { saveBtn.textContent = 'save changes'; }, 1200);
     } catch (err) {
       alert('Error saving: ' + err.message);
       console.error(err);
