@@ -1,6 +1,6 @@
 // profile.js
 import { auth, db } from "./firebase-config.js";
-import { onAuthStateChanged, updateProfile, verifyBeforeUpdateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { onAuthStateChanged, updateProfile, verifyBeforeUpdateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc, setDoc, deleteDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { goToPage } from "./navigation.js";
 
@@ -157,8 +157,76 @@ onAuthStateChanged(auth, async (user) => {
   });
 
   // -------------------
+  // Re-auth helper
+  // -------------------
+  function promptReauth() {
+    return new Promise((resolve, reject) => {
+      const modal = document.getElementById('reauth-modal');
+      const input = document.getElementById('reauth-password-input');
+      const btn = document.getElementById('reauth-submit-btn');
+      const msg = document.getElementById('reauth-msg');
+      const closeBtn = document.getElementById('close-reauth-modal');
+      input.value = '';
+      msg.textContent = '';
+      modal.classList.add('open');
+      const cleanup = () => { modal.classList.remove('open'); btn.onclick = null; closeBtn.onclick = null; };
+      closeBtn.onclick = () => { cleanup(); reject(new Error('cancelled')); };
+      modal.onclick = (e) => { if (e.target === modal) { cleanup(); reject(new Error('cancelled')); } };
+      btn.onclick = async () => {
+        const pw = input.value;
+        if (!pw) return;
+        btn.disabled = true;
+        try {
+          const credential = EmailAuthProvider.credential(user.email, pw);
+          await reauthenticateWithCredential(user, credential);
+          cleanup();
+          resolve();
+        } catch (err) {
+          msg.textContent = 'incorrect password';
+          btn.disabled = false;
+        }
+      };
+    });
+  }
+
+  // -------------------
   // Save profile changes
   // -------------------
+  async function doSave() {
+    const newUser = usernameInput.value.trim().toLowerCase().replace(/[^a-z0-9_\-]/g, '');
+    const newEmail = emailInput.value.trim();
+    if (!newUser) { alert('username is required'); return; }
+    if (newUser.length < 2) { alert('username must be at least 2 characters'); return; }
+    if (!newEmail) return;
+
+    const oldUserId = myUserId;
+    if (newUser !== oldUserId) {
+      const existingDoc = await getDoc(doc(db, "userIds", newUser));
+      if (existingDoc.exists() && existingDoc.data().uid !== user.uid) {
+        saveBtn.textContent = 'username taken';
+        setTimeout(() => { saveBtn.textContent = 'save changes'; }, 2000);
+        return;
+      }
+      if (oldUserId) await deleteDoc(doc(db, "userIds", oldUserId));
+      await setDoc(doc(db, "userIds", newUser), { uid: user.uid });
+    }
+
+    await setDoc(userDocRef, { username: newUser, userId: newUser }, { merge: true });
+    await updateProfile(user, { displayName: newUser });
+    if (newEmail !== user.email) {
+      await verifyBeforeUpdateEmail(user, newEmail);
+      saveBtn.textContent = 'verification email sent!';
+      setTimeout(() => { saveBtn.textContent = 'save changes'; }, 3000);
+    } else {
+      saveBtn.textContent = 'saved!';
+      setTimeout(() => { saveBtn.textContent = 'save changes'; }, 1200);
+    }
+
+    myUserId = newUser;
+    usernameInput.value = newUser;
+    if (userIdDisplay) userIdDisplay.textContent = newUser;
+  }
+
   saveBtn.onclick = async () => {
     const newUser = usernameInput.value.trim().toLowerCase().replace(/[^a-z0-9_\-]/g, '');
     const newEmail = emailInput.value.trim();
@@ -167,35 +235,21 @@ onAuthStateChanged(auth, async (user) => {
     if (!newEmail) return;
 
     try {
-      const oldUserId = myUserId;
-      if (newUser !== oldUserId) {
-        const existingDoc = await getDoc(doc(db, "userIds", newUser));
-        if (existingDoc.exists() && existingDoc.data().uid !== user.uid) {
-          saveBtn.textContent = 'username taken';
-          setTimeout(() => { saveBtn.textContent = 'save changes'; }, 2000);
-          return;
-        }
-        if (oldUserId) await deleteDoc(doc(db, "userIds", oldUserId));
-        await setDoc(doc(db, "userIds", newUser), { uid: user.uid });
-      }
-
-      await setDoc(userDocRef, { username: newUser, userId: newUser }, { merge: true });
-      await updateProfile(user, { displayName: newUser });
-      if (newEmail !== user.email) {
-        await verifyBeforeUpdateEmail(user, newEmail);
-        saveBtn.textContent = 'verification email sent!';
-        setTimeout(() => { saveBtn.textContent = 'save changes'; }, 3000);
-      } else {
-        saveBtn.textContent = 'saved!';
-        setTimeout(() => { saveBtn.textContent = 'save changes'; }, 1200);
-      }
-
-      myUserId = newUser;
-      usernameInput.value = newUser;
-      if (userIdDisplay) userIdDisplay.textContent = newUser;
+      await doSave();
     } catch (err) {
-      alert('Error saving: ' + err.message);
-      console.error(err);
+      if (err.code === 'auth/requires-recent-login') {
+        try {
+          await promptReauth();
+          await doSave();
+        } catch (reauthErr) {
+          if (reauthErr.message !== 'cancelled') {
+            alert('Error saving: ' + reauthErr.message);
+          }
+        }
+      } else {
+        alert('Error saving: ' + err.message);
+        console.error(err);
+      }
     }
   };
 
@@ -222,8 +276,22 @@ onAuthStateChanged(auth, async (user) => {
       submitPasswordBtn.textContent = 'Password Changed!';
       setTimeout(() => { passwordModal.classList.remove('open'); }, 1200);
     } catch (err) {
-      alert('Failed to change password: ' + err.message);
-      console.error(err);
+      if (err.code === 'auth/requires-recent-login') {
+        passwordModal.classList.remove('open');
+        try {
+          await promptReauth();
+          await updatePassword(user, newPassword);
+          submitPasswordBtn.textContent = 'Password Changed!';
+          setTimeout(() => { passwordModal.classList.remove('open'); }, 1200);
+        } catch (reauthErr) {
+          if (reauthErr.message !== 'cancelled') {
+            alert('Failed to change password: ' + reauthErr.message);
+          }
+        }
+      } else {
+        alert('Failed to change password: ' + err.message);
+        console.error(err);
+      }
     }
   };
 
