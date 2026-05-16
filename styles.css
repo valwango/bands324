@@ -2327,12 +2327,12 @@ body {
    ============================================================ */
 
 .pf-page {
-  padding: 12px;
+  padding: 20px 16px;
   max-width: 600px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
 }
 
 /* Profile card */
